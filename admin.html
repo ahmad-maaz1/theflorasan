@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Theflorasan — Admin Orders</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Inter:wght@300;400;500;600&display=swap');
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --maroon: #7b1d3a; --pink: #ec4899; --yellow: #fbbf24;
+      --green: #16a34a; --red: #dc2626; --blue: #3b82f6;
+      --cream: #fffbf7; --gray: #6b7280; --dark: #1f1015;
+    }
+    body { font-family: 'Inter', sans-serif; background: #f8f5f2; color: var(--dark); min-height: 100vh; }
+
+    /* LOGIN */
+    .login-screen {
+      min-height: 100vh; display: flex; align-items: center; justify-content: center;
+      background: linear-gradient(135deg, var(--maroon), #c0365e);
+    }
+    .login-box {
+      background: #fff; border-radius: 22px; padding: 2.5rem 2rem;
+      width: 100%; max-width: 360px;
+      box-shadow: 0 20px 50px rgba(0,0,0,0.2);
+      text-align: center;
+    }
+    .login-box .logo { font-family: 'Playfair Display', serif; font-size: 1.6rem; color: var(--maroon); margin-bottom: 0.3rem; }
+    .login-box .logo span { color: var(--yellow); }
+    .login-box p { font-size: 0.85rem; color: var(--gray); margin-bottom: 1.8rem; }
+    .login-box input {
+      width: 100%; padding: 0.75rem 1rem; border: 1.5px solid #e5e7eb; border-radius: 10px;
+      font-size: 0.9rem; margin-bottom: 0.8rem; outline: none; font-family: 'Inter', sans-serif;
+    }
+    .login-box input:focus { border-color: var(--maroon); }
+    .login-btn {
+      width: 100%; background: var(--maroon); color: #fff; border: none;
+      padding: 0.85rem; border-radius: 35px; font-size: 0.95rem; font-weight: 700;
+      cursor: pointer; transition: all 0.2s;
+    }
+    .login-btn:hover { background: var(--pink); }
+    .login-error { color: var(--red); font-size: 0.82rem; margin-top: 0.6rem; display: none; }
+
+    /* DASHBOARD */
+    .dashboard { display: none; }
+    .top-bar {
+      background: var(--maroon); color: #fff;
+      padding: 0 5%; height: 64px;
+      display: flex; align-items: center; justify-content: space-between;
+      position: sticky; top: 0; z-index: 100;
+      box-shadow: 0 2px 12px rgba(123,29,58,0.3);
+    }
+    .top-bar .logo { font-family: 'Playfair Display', serif; font-size: 1.3rem; }
+    .top-bar .logo span { color: var(--yellow); }
+    .top-bar-right { display: flex; align-items: center; gap: 1rem; }
+    .refresh-btn {
+      background: rgba(255,255,255,0.15); border: none; color: #fff;
+      padding: 0.45rem 1rem; border-radius: 20px; font-size: 0.82rem;
+      cursor: pointer; transition: all 0.2s; font-weight: 600;
+    }
+    .refresh-btn:hover { background: rgba(255,255,255,0.25); }
+    .logout-btn {
+      background: transparent; border: 1px solid rgba(255,255,255,0.4); color: rgba(255,255,255,0.8);
+      padding: 0.4rem 0.9rem; border-radius: 20px; font-size: 0.8rem;
+      cursor: pointer; transition: all 0.2s;
+    }
+    .logout-btn:hover { background: rgba(255,255,255,0.1); }
+
+    .dash-content { padding: 2rem 5%; max-width: 1200px; margin: 0 auto; }
+
+    /* Stats */
+    .stats-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 1.2rem; margin-bottom: 2rem; }
+    .stat-card {
+      background: #fff; border-radius: 16px; padding: 1.4rem;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    }
+    .stat-card .stat-label { font-size: 0.75rem; font-weight: 600; color: var(--gray); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 0.5rem; }
+    .stat-card .stat-value { font-size: 1.8rem; font-weight: 700; color: var(--dark); }
+    .stat-card .stat-value.green { color: var(--green); }
+    .stat-card .stat-value.maroon { color: var(--maroon); }
+
+    /* Filters */
+    .filters-row { display: flex; gap: 0.6rem; margin-bottom: 1.5rem; flex-wrap: wrap; align-items: center; }
+    .filter-chip {
+      padding: 0.4rem 1rem; border-radius: 20px; border: 1.5px solid #e5e7eb;
+      font-size: 0.8rem; font-weight: 600; cursor: pointer; background: #fff;
+      color: var(--gray); transition: all 0.2s;
+    }
+    .filter-chip.active { background: var(--maroon); color: #fff; border-color: var(--maroon); }
+    .search-box {
+      margin-left: auto; padding: 0.45rem 0.9rem; border: 1.5px solid #e5e7eb;
+      border-radius: 20px; font-size: 0.82rem; outline: none; width: 200px;
+      font-family: 'Inter', sans-serif;
+    }
+    .search-box:focus { border-color: var(--maroon); }
+
+    /* Orders table */
+    .orders-card { background: #fff; border-radius: 18px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); overflow: hidden; }
+    .orders-card-header {
+      padding: 1.2rem 1.6rem; border-bottom: 1px solid #f0e8e0;
+      display: flex; justify-content: space-between; align-items: center;
+    }
+    .orders-card-header h3 { font-size: 1rem; font-weight: 700; }
+    .orders-table { width: 100%; border-collapse: collapse; }
+    .orders-table th {
+      background: #fdf6f0; padding: 0.8rem 1.2rem; text-align: left;
+      font-size: 0.75rem; font-weight: 700; color: var(--gray);
+      text-transform: uppercase; letter-spacing: 0.05em;
+    }
+    .orders-table td { padding: 1rem 1.2rem; border-top: 1px solid #f5f0ec; font-size: 0.85rem; vertical-align: middle; }
+    .orders-table tr:hover td { background: #fffbf7; }
+    .order-id-cell { font-weight: 700; color: var(--maroon); font-size: 0.88rem; }
+    .customer-cell strong { display: block; font-size: 0.88rem; }
+    .customer-cell span { font-size: 0.78rem; color: var(--gray); }
+
+    .status-badge {
+      display: inline-block; padding: 0.25rem 0.75rem; border-radius: 20px;
+      font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em;
+    }
+    .status-pending  { background: #fef3c7; color: #b45309; }
+    .status-confirmed{ background: #d1fae5; color: #065f46; }
+    .status-shipped  { background: #dbeafe; color: #1e40af; }
+    .status-delivered{ background: #d1fae5; color: #065f46; }
+    .status-cancelled{ background: #fee2e2; color: #991b1b; }
+
+    .payment-badge {
+      display: inline-block; padding: 0.2rem 0.65rem; border-radius: 15px;
+      font-size: 0.72rem; font-weight: 600; background: #f3f4f6; color: var(--gray);
+    }
+
+    .action-btn {
+      padding: 0.3rem 0.8rem; border-radius: 15px; border: none;
+      font-size: 0.75rem; font-weight: 600; cursor: pointer; transition: all 0.15s; margin-right: 4px;
+    }
+    .btn-view { background: #eff6ff; color: var(--blue); }
+    .btn-view:hover { background: var(--blue); color: #fff; }
+    .btn-status { background: #f3f4f6; color: var(--gray); }
+    .btn-status:hover { background: var(--maroon); color: #fff; }
+
+    /* Order detail modal */
+    .order-detail-overlay {
+      position: fixed; inset: 0; background: rgba(0,0,0,0.5);
+      z-index: 2000; display: none; align-items: center; justify-content: center; padding: 1rem;
+    }
+    .order-detail-overlay.open { display: flex; }
+    .order-detail-modal {
+      background: #fff; border-radius: 20px; width: 100%; max-width: 520px;
+      max-height: 90vh; overflow-y: auto;
+      box-shadow: 0 20px 50px rgba(0,0,0,0.2);
+    }
+    .odm-header {
+      background: var(--maroon); color: #fff; padding: 1.2rem 1.6rem;
+      display: flex; justify-content: space-between; align-items: center;
+      border-radius: 20px 20px 0 0; position: sticky; top: 0;
+    }
+    .odm-header h3 { font-size: 1.05rem; font-weight: 700; }
+    .odm-close {
+      background: rgba(255,255,255,0.15); border: none; color: #fff;
+      width: 30px; height: 30px; border-radius: 50%; cursor: pointer; font-size: 0.9rem;
+    }
+    .odm-body { padding: 1.5rem; }
+    .odm-section { margin-bottom: 1.3rem; }
+    .odm-section h4 { font-size: 0.78rem; font-weight: 700; color: var(--gray); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 0.7rem; }
+    .odm-row { display: flex; justify-content: space-between; font-size: 0.85rem; padding: 0.25rem 0; }
+    .odm-row span:first-child { color: var(--gray); }
+    .odm-row span:last-child { font-weight: 500; }
+    .odm-items { background: #fdf6f0; border-radius: 12px; padding: 0.8rem 1rem; }
+    .odm-item { display: flex; justify-content: space-between; font-size: 0.85rem; padding: 0.3rem 0; border-bottom: 1px solid #f0e8e0; }
+    .odm-item:last-child { border: none; }
+    .odm-total { display: flex; justify-content: space-between; font-size: 1rem; font-weight: 700; padding-top: 0.7rem; margin-top: 0.3rem; border-top: 2px solid #f0e8e0; }
+    .odm-total span:last-child { color: var(--maroon); }
+
+    .status-select {
+      width: 100%; padding: 0.65rem 0.9rem; border: 1.5px solid #e5e7eb; border-radius: 10px;
+      font-size: 0.88rem; font-family: 'Inter', sans-serif; outline: none; margin-top: 0.5rem;
+    }
+    .status-select:focus { border-color: var(--maroon); }
+    .update-status-btn {
+      width: 100%; background: var(--maroon); color: #fff; border: none;
+      padding: 0.75rem; border-radius: 30px; font-weight: 700; font-size: 0.9rem;
+      cursor: pointer; margin-top: 0.8rem; transition: all 0.2s;
+    }
+    .update-status-btn:hover { background: var(--pink); }
+
+    .empty-state { text-align: center; padding: 3rem; color: var(--gray); }
+    .empty-state span { font-size: 2.5rem; display: block; margin-bottom: 0.8rem; }
+
+    .loading-state { text-align: center; padding: 2.5rem; color: var(--gray); font-size: 0.9rem; }
+
+    @media (max-width: 768px) {
+      .orders-table thead { display: none; }
+      .orders-table td { display: block; padding: 0.5rem 1rem; }
+      .orders-table td::before { content: attr(data-label); font-weight: 700; font-size: 0.75rem; color: var(--gray); display: block; }
+      .orders-table tr { border: 1px solid #f0e8e0; border-radius: 12px; margin-bottom: 1rem; display: block; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div class="login-screen" id="loginScreen">
+  <div class="login-box">
+    <div class="logo">The<span>florasan</span></div>
+    <p>Admin Orders Dashboard</p>
+    <input type="password" id="adminPassword" placeholder="Enter admin password" onkeydown="if(event.key==='Enter')login()"/>
+    <button class="login-btn" onclick="login()">Login →</button>
+    <div class="login-error" id="loginError">Incorrect password. Try again.</div>
+  </div>
+</div>
+
+<!-- DASHBOARD -->
+<div class="dashboard" id="dashboard">
+  <div class="top-bar">
+    <div class="logo">The<span>florasan</span> <span style="font-family:Inter;font-size:0.75rem;opacity:0.7;font-weight:400">Admin</span></div>
+    <div class="top-bar-right">
+      <button class="refresh-btn" onclick="loadOrders()">↻ Refresh</button>
+      <button class="logout-btn" onclick="logout()">Logout</button>
+    </div>
+  </div>
+
+  <div class="dash-content">
+    <!-- Stats -->
+    <div class="stats-row" id="statsRow">
+      <div class="stat-card"><div class="stat-label">Total Orders</div><div class="stat-value maroon" id="stat-total">—</div></div>
+      <div class="stat-card"><div class="stat-label">Pending</div><div class="stat-value" id="stat-pending" style="color:#b45309">—</div></div>
+      <div class="stat-card"><div class="stat-label">Confirmed</div><div class="stat-value green" id="stat-confirmed">—</div></div>
+      <div class="stat-card"><div class="stat-label">Total Revenue</div><div class="stat-value maroon" id="stat-revenue">—</div></div>
+    </div>
+
+    <!-- Filters -->
+    <div class="filters-row">
+      <button class="filter-chip active" onclick="setFilter('all',this)">All</button>
+      <button class="filter-chip" onclick="setFilter('pending',this)">Pending</button>
+      <button class="filter-chip" onclick="setFilter('confirmed',this)">Confirmed</button>
+      <button class="filter-chip" onclick="setFilter('shipped',this)">Shipped</button>
+      <button class="filter-chip" onclick="setFilter('delivered',this)">Delivered</button>
+      <button class="filter-chip" onclick="setFilter('cancelled',this)">Cancelled</button>
+      <input class="search-box" type="text" placeholder="🔍 Search order / name..." id="searchBox" oninput="renderOrders()"/>
+    </div>
+
+    <!-- Orders -->
+    <div class="orders-card">
+      <div class="orders-card-header">
+        <h3>Orders</h3>
+        <span style="font-size:0.82rem;color:var(--gray)" id="order-count"></span>
+      </div>
+      <div id="ordersContainer">
+        <div class="loading-state">Loading orders...</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Order Detail Modal -->
+<div class="order-detail-overlay" id="orderDetailOverlay">
+  <div class="order-detail-modal">
+    <div class="odm-header">
+      <h3 id="odm-title">Order Details</h3>
+      <button class="odm-close" onclick="closeOrderDetail()">✕</button>
+    </div>
+    <div class="odm-body" id="odmBody"></div>
+  </div>
+</div>
+
+<script type="module">
+  // ══ FIREBASE CONFIG ══
+  // Replace with YOUR Firebase config (same as in index.html)
+  import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
+  import { getFirestore, collection, getDocs, doc, updateDoc, query, orderBy } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
+
+  const FIREBASE_CONFIG = {
+    apiKey:            "AIzaSyBg-HUf_RWAABNJSS-vkb282DlcFiHBpvQ",
+    authDomain:        "theflorasan-3ca21.firebaseapp.com",
+    projectId:         "theflorasan-3ca21",
+    storageBucket:     "theflorasan-3ca21.firebasestorage.app",
+    messagingSenderId: "829876528250",
+    appId:             "1:829876528250:web:9880e527aed19cbee907c3"
+  };
+
+  // ══ ADMIN PASSWORD ══
+  // Change this to your own password
+  const ADMIN_PASSWORD = "florasan2025";
+
+  let app, db;
+  let allOrders = [];
+  let currentFilter = 'all';
+  let selectedOrderId = null;
+
+  // ── Auth ──
+  window.login = function() {
+    const pw = document.getElementById('adminPassword').value;
+    if (pw === ADMIN_PASSWORD) {
+      document.getElementById('loginScreen').style.display = 'none';
+      document.getElementById('dashboard').style.display = 'block';
+      initFirebase();
+    } else {
+      document.getElementById('loginError').style.display = 'block';
+    }
+  };
+
+  window.logout = function() {
+    document.getElementById('loginScreen').style.display = 'flex';
+    document.getElementById('dashboard').style.display = 'none';
+    document.getElementById('adminPassword').value = '';
+  };
+
+  document.getElementById('adminPassword').addEventListener('keydown', e => {
+    if (e.key === 'Enter') window.login();
+  });
+
+  function initFirebase() {
+    if (FIREBASE_CONFIG.apiKey === 'YOUR_API_KEY') {
+      document.getElementById('ordersContainer').innerHTML = `
+        <div class="empty-state">
+          <span>⚙️</span>
+          <p><strong>Firebase not configured yet.</strong><br/>
+          Add your Firebase config to admin.html and index.html.<br/>
+          See README.md for instructions.</p>
+        </div>`;
+      return;
+    }
+    app = initializeApp(FIREBASE_CONFIG);
+    db  = getFirestore(app);
+    window.loadOrders();
+  }
+
+  // ── Load orders ──
+  window.loadOrders = async function() {
+    if (!db) return;
+    document.getElementById('ordersContainer').innerHTML = '<div class="loading-state">Loading orders...</div>';
+    try {
+      const q = query(collection(db, 'orders'), orderBy('createdAt', 'desc'));
+      const snap = await getDocs(q);
+      allOrders = snap.docs.map(d => ({ _docId: d.id, ...d.data() }));
+      updateStats();
+      renderOrders();
+    } catch(e) {
+      document.getElementById('ordersContainer').innerHTML = `<div class="empty-state"><span>⚠️</span><p>Error loading orders.<br/>${e.message}</p></div>`;
+    }
+  };
+
+  function updateStats() {
+    const total   = allOrders.length;
+    const pending = allOrders.filter(o => o.status === 'pending').length;
+    const confirmed = allOrders.filter(o => ['confirmed','shipped','delivered'].includes(o.status)).length;
+    const revenue = allOrders.filter(o => o.status !== 'cancelled').reduce((s,o) => s + (o.total||0), 0);
+    document.getElementById('stat-total').textContent     = total;
+    document.getElementById('stat-pending').textContent   = pending;
+    document.getElementById('stat-confirmed').textContent = confirmed;
+    document.getElementById('stat-revenue').textContent   = 'Rs. ' + revenue.toLocaleString();
+  }
+
+  window.setFilter = function(f, el) {
+    currentFilter = f;
+    document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
+    el.classList.add('active');
+    renderOrders();
+  };
+
+  window.renderOrders = function() {
+    const search = document.getElementById('searchBox').value.toLowerCase();
+    let filtered = allOrders;
+    if (currentFilter !== 'all') filtered = filtered.filter(o => o.status === currentFilter);
+    if (search) filtered = filtered.filter(o =>
+      o.orderId?.toLowerCase().includes(search) ||
+      o.customer?.firstName?.toLowerCase().includes(search) ||
+      o.customer?.lastName?.toLowerCase().includes(search) ||
+      o.customer?.phone?.includes(search)
+    );
+
+    document.getElementById('order-count').textContent = `${filtered.length} order${filtered.length !== 1 ? 's' : ''}`;
+
+    if (filtered.length === 0) {
+      document.getElementById('ordersContainer').innerHTML = '<div class="empty-state"><span>🌸</span><p>No orders found.</p></div>';
+      return;
+    }
+
+    const payIcons = {cod:'💵', jazzcash:'📱', easypaisa:'💚', bank:'🏦'};
+    const payLabels = {cod:'COD', jazzcash:'JazzCash', easypaisa:'Easypaisa', bank:'Bank'};
+
+    document.getElementById('ordersContainer').innerHTML = `
+      <div style="overflow-x:auto">
+      <table class="orders-table">
+        <thead>
+          <tr>
+            <th>Order ID</th>
+            <th>Customer</th>
+            <th>Items</th>
+            <th>Total</th>
+            <th>Payment</th>
+            <th>Status</th>
+            <th>Date</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${filtered.map(o => `
+            <tr>
+              <td data-label="Order ID"><span class="order-id-cell">${o.orderId || '—'}</span></td>
+              <td data-label="Customer">
+                <div class="customer-cell">
+                  <strong>${o.customer?.firstName} ${o.customer?.lastName}</strong>
+                  <span>${o.customer?.phone}</span>
+                  <span>${o.customer?.city}</span>
+                </div>
+              </td>
+              <td data-label="Items">${(o.items||[]).length} item${(o.items||[]).length !== 1 ? 's' : ''}</td>
+              <td data-label="Total"><strong>Rs. ${(o.total||0).toLocaleString()}</strong></td>
+              <td data-label="Payment"><span class="payment-badge">${payIcons[o.payment]||''} ${payLabels[o.payment]||o.payment}</span></td>
+              <td data-label="Status"><span class="status-badge status-${o.status||'pending'}">${o.status||'pending'}</span></td>
+              <td data-label="Date">${o.createdAt ? new Date(o.createdAt).toLocaleDateString('en-PK') : '—'}</td>
+              <td data-label="Actions">
+                <button class="action-btn btn-view" onclick="viewOrder('${o._docId}')">View</button>
+                <button class="action-btn btn-status" onclick="quickStatus('${o._docId}', '${o.status}')">Update</button>
+              </td>
+            </tr>
+          `).join('')}
+        </tbody>
+      </table>
+      </div>`;
+  };
+
+  // ── View order detail ──
+  window.viewOrder = function(docId) {
+    const o = allOrders.find(x => x._docId === docId);
+    if (!o) return;
+    selectedOrderId = docId;
+    document.getElementById('odm-title').textContent = 'Order ' + (o.orderId || docId);
+    const payLabels = {cod:'Cash on Delivery 💵', jazzcash:'JazzCash 📱', easypaisa:'Easypaisa 💚', bank:'Bank Transfer 🏦'};
+    document.getElementById('odmBody').innerHTML = `
+      <div class="odm-section">
+        <h4>Customer</h4>
+        <div class="odm-row"><span>Name</span><span>${o.customer?.firstName} ${o.customer?.lastName}</span></div>
+        <div class="odm-row"><span>Phone</span><span>${o.customer?.phone}</span></div>
+        <div class="odm-row"><span>Address</span><span>${o.customer?.address}</span></div>
+        <div class="odm-row"><span>City</span><span>${o.customer?.city}, ${o.customer?.province}</span></div>
+        ${o.customer?.notes ? `<div class="odm-row"><span>Notes</span><span>${o.customer.notes}</span></div>` : ''}
+      </div>
+      <div class="odm-section">
+        <h4>Items</h4>
+        <div class="odm-items">
+          ${(o.items||[]).map(i => `<div class="odm-item"><span>${i.name} × ${i.qty}</span><span>Rs. ${(i.total||0).toLocaleString()}</span></div>`).join('')}
+          <div class="odm-total"><span>Total</span><span>Rs. ${(o.total||0).toLocaleString()}</span></div>
+        </div>
+      </div>
+      <div class="odm-section">
+        <h4>Payment</h4>
+        <div class="odm-row"><span>Method</span><span>${payLabels[o.payment]||o.payment}</span></div>
+        <div class="odm-row"><span>Placed</span><span>${o.createdAt ? new Date(o.createdAt).toLocaleString('en-PK') : '—'}</span></div>
+      </div>
+      <div class="odm-section">
+        <h4>Update Status</h4>
+        <select class="status-select" id="newStatusSelect">
+          <option value="pending"   ${o.status==='pending'   ?'selected':''}>⏳ Pending</option>
+          <option value="confirmed" ${o.status==='confirmed' ?'selected':''}>✅ Confirmed</option>
+          <option value="shipped"   ${o.status==='shipped'   ?'selected':''}>🚚 Shipped</option>
+          <option value="delivered" ${o.status==='delivered' ?'selected':''}>📦 Delivered</option>
+          <option value="cancelled" ${o.status==='cancelled' ?'selected':''}>❌ Cancelled</option>
+        </select>
+        <button class="update-status-btn" onclick="updateOrderStatus()">Save Status</button>
+      </div>
+    `;
+    document.getElementById('orderDetailOverlay').classList.add('open');
+  };
+
+  window.closeOrderDetail = function() {
+    document.getElementById('orderDetailOverlay').classList.remove('open');
+    selectedOrderId = null;
+  };
+
+  window.quickStatus = function(docId, current) {
+    const next = {pending:'confirmed', confirmed:'shipped', shipped:'delivered', delivered:'delivered', cancelled:'cancelled'};
+    updateDoc(doc(db, 'orders', docId), { status: next[current] || 'confirmed' }).then(() => {
+      const o = allOrders.find(x => x._docId === docId);
+      if (o) o.status = next[current] || 'confirmed';
+      updateStats(); renderOrders();
+    });
+  };
+
+  window.updateOrderStatus = async function() {
+    if (!selectedOrderId) return;
+    const newStatus = document.getElementById('newStatusSelect').value;
+    await updateDoc(doc(db, 'orders', selectedOrderId), { status: newStatus });
+    const o = allOrders.find(x => x._docId === selectedOrderId);
+    if (o) o.status = newStatus;
+    updateStats(); renderOrders();
+    closeOrderDetail();
+  };
+
+  document.getElementById('orderDetailOverlay').addEventListener('click', e => {
+    if (e.target === document.getElementById('orderDetailOverlay')) closeOrderDetail();
+  });
+</script>
+</body>
+</html>

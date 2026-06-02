@@ -56,14 +56,44 @@ Change both the display price AND the number in `addToCart(...)`.
 
 Find the `<p>` tag under the product name and replace the text.
 
-## Checkout / Orders
+## Firebase Setup (Orders Database)
 
-Currently the checkout button opens WhatsApp with the order details.
-Update this line in the `<script>` section with your actual WhatsApp number:
-```js
-window.open(`https://wa.me/923000000000?text=...`)
+### Step 1 — Create a Firebase project
+1. Go to [console.firebase.google.com](https://console.firebase.google.com)
+2. Click **Add project** → name it `theflorasan` → Continue
+3. Disable Google Analytics → **Create project**
+
+### Step 2 — Enable Firestore
+1. Left sidebar → **Firestore Database** → **Create database**
+2. Choose **Production mode** → region `asia-south1` (Pakistan) → **Enable**
+3. Go to **Rules** tab and set:
 ```
-Replace `923000000000` with your number (country code + number, no spaces or +).
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /orders/{orderId} {
+      allow create: if true;
+      allow read, update: if false;
+    }
+  }
+}
+```
+4. Click **Publish**
+
+### Step 3 — Get your config
+1. **Project Settings** (gear icon) → **Your apps** → click `</>` → register as `theflorasan-web`
+2. Copy the `firebaseConfig` object shown
+
+### Step 4 — Paste config into both files
+In `index.html` AND `admin.html` find `const FIREBASE_CONFIG = {` and replace the placeholder values.
+
+### Step 5 — Change admin password
+In `admin.html` find `const ADMIN_PASSWORD = "florasan2025"` and change it.
+
+### Step 6 — Update your phone number
+In `index.html` find the payment instruction boxes and replace `0300-0000000` with your actual number.
+
+---
 
 ## Deploying Online (Free)
 
