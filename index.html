@@ -1,0 +1,1103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Theflorasan — Handmade Pipe Cleaner Flowers</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Inter:wght@300;400;500;600&display=swap');
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --pink:    #f472b6;
+      --pink-lt: #fce7f3;
+      --pink-md: #ec4899;
+      --yellow:  #fbbf24;
+      --yellow-lt:#fef3c7;
+      --maroon:  #7b1d3a;
+      --maroon-lt:#fdf0f4;
+      --blue:    #3b82f6;
+      --blue-lt: #eff6ff;
+      --blue-dk: #1d4ed8;
+      --cream:   #fffbf7;
+      --white:   #ffffff;
+      --gray:    #6b7280;
+      --dark:    #1f1015;
+    }
+
+    html { scroll-behavior: smooth; }
+    body { font-family: 'Inter', sans-serif; background: var(--cream); color: var(--dark); min-height: 100vh; }
+
+    /* ══ NAV ══ */
+    nav {
+      position: sticky; top: 0; z-index: 1000;
+      background: var(--maroon);
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 5%; height: 66px;
+      box-shadow: 0 2px 16px rgba(123,29,58,0.25);
+    }
+    .logo { font-family: 'Playfair Display', serif; font-size: 1.55rem; color: var(--white); cursor: pointer; }
+    .logo span { color: var(--yellow); }
+    .nav-links { display: flex; gap: 0.3rem; list-style: none; }
+    .nav-links li a {
+      text-decoration: none; color: rgba(255,255,255,0.82);
+      font-size: 0.88rem; font-weight: 500;
+      padding: 0.45rem 1rem; border-radius: 25px; transition: all 0.2s; display: block;
+    }
+    .nav-links li a:hover, .nav-links li a.active { background: rgba(255,255,255,0.15); color: var(--white); }
+    .nav-links li a.active { background: var(--pink-md); }
+
+    .nav-right { display: flex; align-items: center; gap: 0.8rem; }
+    .nav-cart-btn {
+      background: var(--yellow); color: var(--maroon);
+      border: none; padding: 0.5rem 1.2rem; border-radius: 25px;
+      font-size: 0.85rem; font-weight: 700; cursor: pointer; transition: all 0.2s;
+      white-space: nowrap; position: relative;
+    }
+    .nav-cart-btn:hover { background: var(--white); }
+    .cart-count {
+      background: var(--maroon); color: #fff;
+      font-size: 0.7rem; font-weight: 700;
+      width: 18px; height: 18px; border-radius: 50%;
+      display: inline-flex; align-items: center; justify-content: center;
+      margin-left: 4px; vertical-align: middle;
+    }
+    .hamburger { display: none; flex-direction: column; gap: 5px; cursor: pointer; padding: 4px; }
+    .hamburger span { display: block; width: 24px; height: 2px; background: #fff; border-radius: 2px; }
+
+    /* ══ CART SIDEBAR ══ */
+    .cart-overlay {
+      position: fixed; inset: 0; background: rgba(0,0,0,0.45);
+      z-index: 2000; opacity: 0; pointer-events: none; transition: opacity 0.3s;
+    }
+    .cart-overlay.open { opacity: 1; pointer-events: all; }
+    .cart-sidebar {
+      position: fixed; top: 0; right: -420px; width: 400px; max-width: 100vw;
+      height: 100vh; background: #fff; z-index: 2001;
+      display: flex; flex-direction: column;
+      box-shadow: -4px 0 30px rgba(0,0,0,0.15);
+      transition: right 0.35s cubic-bezier(0.25,0.46,0.45,0.94);
+    }
+    .cart-sidebar.open { right: 0; }
+
+    .cart-header {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 1.4rem 1.6rem; border-bottom: 1px solid #f0e8e0;
+      background: var(--maroon);
+    }
+    .cart-header h3 { font-family: 'Playfair Display', serif; color: #fff; font-size: 1.2rem; }
+    .cart-close {
+      background: rgba(255,255,255,0.15); border: none; color: #fff;
+      width: 34px; height: 34px; border-radius: 50%;
+      font-size: 1.1rem; cursor: pointer; display: flex; align-items: center; justify-content: center;
+      transition: background 0.2s;
+    }
+    .cart-close:hover { background: rgba(255,255,255,0.3); }
+
+    .cart-items { flex: 1; overflow-y: auto; padding: 1rem 1.4rem; }
+    .cart-empty {
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      height: 100%; color: var(--gray); text-align: center; gap: 0.8rem;
+    }
+    .cart-empty span { font-size: 3rem; }
+    .cart-empty p { font-size: 0.9rem; }
+
+    .cart-item {
+      display: flex; gap: 1rem; align-items: flex-start;
+      padding: 1rem 0; border-bottom: 1px solid #f5f0ec;
+    }
+    .cart-item-img {
+      width: 58px; height: 58px; border-radius: 12px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.8rem; flex-shrink: 0; background: var(--pink-lt);
+    }
+    .cart-item-info { flex: 1; }
+    .cart-item-info h4 { font-size: 0.9rem; font-weight: 600; margin-bottom: 0.2rem; }
+    .cart-item-price { color: var(--maroon); font-weight: 700; font-size: 0.88rem; }
+    .cart-item-controls {
+      display: flex; align-items: center; gap: 0.5rem; margin-top: 0.5rem;
+    }
+    .qty-btn {
+      width: 26px; height: 26px; border-radius: 50%;
+      border: 1.5px solid #e5e7eb; background: #fff;
+      font-size: 0.9rem; cursor: pointer; display: flex; align-items: center; justify-content: center;
+      transition: all 0.15s; color: var(--dark); font-weight: 600;
+    }
+    .qty-btn:hover { border-color: var(--maroon); color: var(--maroon); }
+    .qty-num { font-size: 0.88rem; font-weight: 600; min-width: 20px; text-align: center; }
+    .remove-btn {
+      background: none; border: none; color: #d1d5db;
+      cursor: pointer; font-size: 1rem; margin-left: auto;
+      transition: color 0.15s; padding: 4px;
+    }
+    .remove-btn:hover { color: #ef4444; }
+
+    .cart-footer { padding: 1.4rem 1.6rem; border-top: 1px solid #f0e8e0; }
+    .cart-subtotal {
+      display: flex; justify-content: space-between;
+      font-size: 0.88rem; color: var(--gray); margin-bottom: 0.5rem;
+    }
+    .cart-total {
+      display: flex; justify-content: space-between;
+      font-size: 1.1rem; font-weight: 700; color: var(--dark);
+      margin-bottom: 1.2rem; padding-top: 0.6rem;
+      border-top: 2px solid #f0e8e0;
+    }
+    .cart-total span:last-child { color: var(--maroon); }
+    .checkout-btn {
+      width: 100%; background: var(--maroon); color: #fff;
+      border: none; padding: 0.9rem; border-radius: 35px;
+      font-size: 0.95rem; font-weight: 700; cursor: pointer;
+      transition: all 0.2s; margin-bottom: 0.6rem;
+    }
+    .checkout-btn:hover { background: var(--pink-md); }
+    .continue-btn {
+      width: 100%; background: transparent; color: var(--gray);
+      border: none; padding: 0.5rem; font-size: 0.85rem; cursor: pointer;
+      transition: color 0.2s;
+    }
+    .continue-btn:hover { color: var(--maroon); }
+
+    /* ══ PAGES ══ */
+    .page { display: none; animation: fadeIn 0.35s ease; }
+    .page.active { display: block; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+
+    /* ══ HOME HERO ══ */
+    .hero {
+      background: linear-gradient(135deg, var(--maroon) 0%, #a8294f 50%, #c0365e 100%);
+      color: #fff; padding: 5.5rem 5% 4.5rem; text-align: center; position: relative; overflow: hidden;
+    }
+    .hero::after {
+      content: ''; position: absolute; bottom: -2px; left: 0; right: 0;
+      height: 60px; background: var(--cream);
+      clip-path: ellipse(55% 100% at 50% 100%);
+    }
+    .hero-badge {
+      display: inline-block; background: rgba(251,191,36,0.2);
+      border: 1px solid rgba(251,191,36,0.5); color: var(--yellow);
+      font-size: 0.75rem; font-weight: 600; letter-spacing: 0.12em;
+      text-transform: uppercase; padding: 0.35rem 1.1rem; border-radius: 30px; margin-bottom: 1.3rem;
+    }
+    .hero h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(2rem, 5vw, 3.6rem); line-height: 1.15;
+      margin-bottom: 1rem; max-width: 680px; margin-left: auto; margin-right: auto;
+    }
+    .hero h1 em { color: var(--yellow); font-style: italic; }
+    .hero p { font-size: 1.05rem; opacity: 0.85; max-width: 500px; margin: 0 auto 2.2rem; line-height: 1.7; }
+    .hero-btns { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; }
+    .btn-yellow {
+      background: var(--yellow); color: var(--maroon);
+      padding: 0.8rem 2rem; border-radius: 35px; font-weight: 700;
+      font-size: 0.92rem; border: none; cursor: pointer; text-decoration: none;
+      display: inline-block; transition: all 0.2s;
+    }
+    .btn-yellow:hover { background: #fff; transform: translateY(-2px); }
+    .btn-outline-white {
+      background: transparent; color: #fff; padding: 0.8rem 2rem;
+      border-radius: 35px; font-weight: 600; font-size: 0.92rem;
+      border: 2px solid rgba(255,255,255,0.5); cursor: pointer; text-decoration: none;
+      display: inline-block; transition: all 0.2s;
+    }
+    .btn-outline-white:hover { border-color: #fff; background: rgba(255,255,255,0.1); }
+
+    /* ══ CAROUSEL ══ */
+    .carousel-section { padding: 4rem 0 4.5rem; background: var(--cream); }
+    .section-title {
+      font-family: 'Playfair Display', serif; font-size: clamp(1.6rem, 3vw, 2.3rem);
+      text-align: center; margin-bottom: 0.4rem; color: var(--maroon);
+    }
+    .section-sub { text-align: center; color: var(--gray); font-size: 0.95rem; margin-bottom: 2.5rem; }
+    .carousel-wrapper { position: relative; overflow: hidden; padding: 0 5%; }
+    .carousel-track {
+      display: flex; gap: 1.4rem;
+      transition: transform 0.45s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    }
+    .carousel-card {
+      flex: 0 0 220px; background: #fff; border-radius: 20px; overflow: hidden;
+      box-shadow: 0 3px 16px rgba(0,0,0,0.07); text-align: center;
+      transition: transform 0.2s, box-shadow 0.2s; cursor: pointer;
+    }
+    .carousel-card:hover { transform: translateY(-6px); box-shadow: 0 10px 30px rgba(123,29,58,0.13); }
+    .carousel-card-img {
+      height: 180px; display: flex; align-items: center; justify-content: center; font-size: 4.5rem;
+      overflow: hidden;
+    }
+    /* ── HOW TO ADD YOUR OWN IMAGES ──
+       Replace the emoji inside .carousel-card-img with:
+       <img src="images/singles/your-image.jpg" alt="Flower name" style="width:100%;height:100%;object-fit:cover"/>
+    */
+    .carousel-card-img img { width: 100%; height: 100%; object-fit: cover; }
+    .carousel-card-info { padding: 1rem 0.8rem 1.2rem; }
+    .carousel-card-info h4 { font-size: 0.92rem; font-weight: 600; color: var(--dark); margin-bottom: 0.25rem; }
+    .carousel-card-info p { font-size: 0.78rem; color: var(--gray); line-height: 1.5; }
+    .flower-tag {
+      display: inline-block; font-size: 0.7rem; padding: 0.2rem 0.65rem;
+      border-radius: 20px; font-weight: 600; margin-top: 0.4rem;
+    }
+    .carousel-controls { display: flex; justify-content: center; align-items: center; gap: 1rem; margin-top: 2rem; }
+    .carousel-btn {
+      width: 42px; height: 42px; border-radius: 50%;
+      border: 2px solid var(--pink-md); background: #fff; color: var(--pink-md);
+      font-size: 1.1rem; cursor: pointer; transition: all 0.2s;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .carousel-btn:hover { background: var(--pink-md); color: #fff; }
+    .carousel-dots { display: flex; gap: 6px; }
+    .dot { width: 8px; height: 8px; border-radius: 50%; background: #ddd; cursor: pointer; transition: all 0.2s; }
+    .dot.active { background: var(--pink-md); width: 22px; border-radius: 4px; }
+
+    /* ══ CATEGORIES ══ */
+    .categories {
+      padding: 0 5% 5rem; display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 1.5rem; max-width: 900px; margin: 0 auto;
+    }
+    .cat-card {
+      border-radius: 22px; padding: 2.5rem 2rem; text-align: center;
+      cursor: pointer; transition: transform 0.2s, box-shadow 0.2s;
+      text-decoration: none; display: block;
+    }
+    .cat-card:hover { transform: translateY(-5px); box-shadow: 0 12px 32px rgba(0,0,0,0.12); }
+    .cat-card .cat-icon { font-size: 3.5rem; margin-bottom: 1rem; display: block; }
+    .cat-card h3 { font-family: 'Playfair Display', serif; font-size: 1.3rem; margin-bottom: 0.5rem; }
+    .cat-card p { font-size: 0.85rem; line-height: 1.6; opacity: 0.8; }
+    .cat-card .cat-link { display: inline-block; margin-top: 1.2rem; font-size: 0.82rem; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; }
+    .cat-bouquets { background: linear-gradient(135deg, var(--pink-lt), #fce7f3); color: var(--maroon); }
+    .cat-bouquets .cat-link { color: var(--pink-md); }
+    .cat-singles { background: linear-gradient(135deg, var(--yellow-lt), #fef9c3); color: #78350f; }
+    .cat-singles .cat-link { color: #d97706; }
+
+    /* ══ WHY ══ */
+    .why-section { background: var(--maroon); color: #fff; padding: 4.5rem 5%; text-align: center; }
+    .why-section .section-title { color: var(--yellow); }
+    .why-section .section-sub { color: rgba(255,255,255,0.7); }
+    .why-grid {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 2rem; max-width: 900px; margin: 2.5rem auto 0;
+    }
+    .why-item { padding: 1.5rem 1rem; }
+    .why-icon { font-size: 2.2rem; margin-bottom: 0.8rem; display: block; }
+    .why-item h4 { font-size: 0.95rem; font-weight: 600; margin-bottom: 0.35rem; }
+    .why-item p { font-size: 0.82rem; opacity: 0.75; line-height: 1.6; }
+
+    /* ══ PRODUCT PAGES ══ */
+    .page-hero { padding: 4rem 5% 3rem; text-align: center; }
+    .page-hero h1 { font-family: 'Playfair Display', serif; font-size: clamp(2rem, 4vw, 3rem); margin-bottom: 0.6rem; }
+    .page-hero p { color: var(--gray); font-size: 1rem; max-width: 480px; margin: 0 auto; }
+    .bouquets-hero { background: linear-gradient(135deg, var(--pink-lt) 0%, #fce7f3 100%); }
+    .bouquets-hero h1 { color: var(--maroon); }
+    .singles-hero { background: linear-gradient(135deg, var(--yellow-lt) 0%, #fef3c7 100%); }
+    .singles-hero h1 { color: #78350f; }
+
+    .filter-bar { display: flex; gap: 0.6rem; padding: 0 5% 2rem; flex-wrap: wrap; justify-content: center; }
+    .filter-btn {
+      padding: 0.45rem 1.2rem; border-radius: 25px; border: 2px solid #e5e7eb;
+      font-size: 0.82rem; font-weight: 600; cursor: pointer; transition: all 0.2s;
+      background: #fff; color: var(--gray);
+    }
+    .filter-btn:hover, .filter-btn.active { background: var(--maroon); color: #fff; border-color: var(--maroon); }
+
+    .products-section { padding: 0 5% 5rem; }
+    .products-grid {
+      display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+      gap: 1.8rem; max-width: 1100px; margin: 0 auto;
+    }
+    .product-card {
+      background: #fff; border-radius: 20px; overflow: hidden;
+      box-shadow: 0 2px 14px rgba(0,0,0,0.06); transition: transform 0.22s, box-shadow 0.22s;
+    }
+    .product-card:hover { transform: translateY(-6px); box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
+    .product-img {
+      height: 200px; display: flex; align-items: center; justify-content: center;
+      font-size: 4.5rem; position: relative; overflow: hidden;
+    }
+    /* ── HOW TO ADD YOUR OWN IMAGES ──
+       Replace emoji with: <img src="images/bouquets/your-image.jpg" alt="Product name" style="width:100%;height:100%;object-fit:cover"/>
+    */
+    .product-img img { width: 100%; height: 100%; object-fit: cover; }
+    .product-badge {
+      position: absolute; top: 12px; left: 12px;
+      font-size: 0.68rem; font-weight: 700; padding: 0.25rem 0.65rem;
+      border-radius: 20px; text-transform: uppercase; letter-spacing: 0.05em;
+    }
+    .badge-new { background: var(--blue); color: #fff; }
+    .badge-pop { background: var(--pink-md); color: #fff; }
+    .badge-custom { background: var(--yellow); color: var(--maroon); }
+    .product-info { padding: 1.2rem 1.4rem 1.5rem; }
+    .product-info h3 { font-size: 1rem; font-weight: 600; margin-bottom: 0.3rem; }
+    .product-info p { font-size: 0.82rem; color: var(--gray); line-height: 1.55; margin-bottom: 0.9rem; }
+    .product-meta { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 0.5rem; }
+    .price { font-size: 1.1rem; font-weight: 700; color: var(--maroon); }
+    .colors-row { display: flex; gap: 4px; margin-bottom: 0.8rem; flex-wrap: wrap; }
+    .color-dot {
+      width: 14px; height: 14px; border-radius: 50%;
+      border: 1.5px solid rgba(0,0,0,0.1); cursor: pointer; transition: transform 0.15s;
+    }
+    .color-dot:hover { transform: scale(1.3); }
+    .add-btn {
+      background: var(--maroon); color: #fff; border: none;
+      padding: 0.52rem 1.2rem; border-radius: 25px; font-size: 0.82rem;
+      font-weight: 600; cursor: pointer; transition: all 0.2s;
+    }
+    .add-btn:hover { background: var(--pink-md); transform: translateY(-1px); }
+    .add-btn.custom { background: var(--blue); }
+    .add-btn.custom:hover { background: var(--blue-dk); }
+    .add-btn.added { background: #16a34a; }
+
+    /* ══ CONTACT ══ */
+    .contact-hero { background: linear-gradient(135deg, var(--blue-lt) 0%, #dbeafe 100%); }
+    .contact-hero h1 { color: var(--blue-dk); }
+    .contact-section {
+      padding: 0 5% 5rem; display: grid;
+      grid-template-columns: 1fr 1fr; gap: 3rem;
+      max-width: 960px; margin: 0 auto;
+    }
+    @media (max-width: 680px) { .contact-section { grid-template-columns: 1fr; } }
+    .contact-form-box { background: #fff; border-radius: 22px; padding: 2.2rem; box-shadow: 0 3px 18px rgba(0,0,0,0.07); }
+    .contact-form-box h3 { font-family: 'Playfair Display', serif; font-size: 1.3rem; color: var(--maroon); margin-bottom: 1.4rem; }
+    .form-group { margin-bottom: 1.1rem; }
+    .form-group label { display: block; font-size: 0.82rem; font-weight: 600; color: var(--dark); margin-bottom: 0.4rem; }
+    .form-group input, .form-group textarea, .form-group select {
+      width: 100%; padding: 0.7rem 1rem; border: 1.5px solid #e5e7eb; border-radius: 10px;
+      font-size: 0.88rem; font-family: 'Inter', sans-serif; outline: none; transition: border-color 0.2s; background: var(--cream);
+    }
+    .form-group input:focus, .form-group textarea:focus, .form-group select:focus { border-color: var(--pink-md); }
+    .form-group textarea { resize: vertical; min-height: 110px; }
+    .submit-btn {
+      width: 100%; background: var(--maroon); color: #fff; border: none;
+      padding: 0.85rem; border-radius: 35px; font-size: 0.95rem; font-weight: 700;
+      cursor: pointer; transition: all 0.2s; margin-top: 0.5rem;
+    }
+    .submit-btn:hover { background: var(--pink-md); }
+    .contact-info { display: flex; flex-direction: column; gap: 1.3rem; }
+    .info-card {
+      background: #fff; border-radius: 18px; padding: 1.5rem;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.05); display: flex; align-items: flex-start; gap: 1rem;
+    }
+    .info-icon { font-size: 1.6rem; flex-shrink: 0; width: 44px; height: 44px; border-radius: 12px; display: flex; align-items: center; justify-content: center; }
+    .icon-pink { background: var(--pink-lt); }
+    .icon-yellow { background: var(--yellow-lt); }
+    .icon-blue { background: var(--blue-lt); }
+    .icon-maroon { background: var(--maroon-lt); }
+    .info-text h4 { font-size: 0.88rem; font-weight: 700; margin-bottom: 0.2rem; color: var(--dark); }
+    .info-text p { font-size: 0.82rem; color: var(--gray); line-height: 1.55; }
+
+    /* ══ FOOTER ══ */
+    footer { background: var(--dark); color: rgba(255,255,255,0.6); padding: 3rem 5% 1.5rem; }
+    .footer-grid { display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 2.5rem; margin-bottom: 2rem; }
+    @media (max-width: 680px) { .footer-grid { grid-template-columns: 1fr; gap: 1.5rem; } }
+    .footer-brand .logo { font-size: 1.4rem; display: block; margin-bottom: 0.8rem; cursor: default; }
+    .footer-brand p { font-size: 0.82rem; line-height: 1.7; max-width: 260px; }
+    .footer-col h4 { color: var(--yellow); font-size: 0.82rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 0.9rem; }
+    .footer-col ul { list-style: none; }
+    .footer-col ul li { margin-bottom: 0.5rem; }
+    .footer-col ul li a { color: rgba(255,255,255,0.55); text-decoration: none; font-size: 0.83rem; transition: color 0.2s; cursor: pointer; }
+    .footer-col ul li a:hover { color: var(--pink); }
+    .footer-bottom { border-top: 1px solid rgba(255,255,255,0.08); padding-top: 1.2rem; text-align: center; font-size: 0.78rem; }
+
+    /* ══ TOAST ══ */
+    .toast {
+      position: fixed; bottom: 1.5rem; left: 50%; transform: translateX(-50%) translateY(80px);
+      background: var(--dark); color: #fff; padding: 0.7rem 1.5rem;
+      border-radius: 30px; font-size: 0.88rem; font-weight: 500;
+      z-index: 3000; transition: transform 0.3s; white-space: nowrap;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+    }
+    .toast.show { transform: translateX(-50%) translateY(0); }
+
+    /* ══ RESPONSIVE ══ */
+    @media (max-width: 680px) {
+      .nav-links { display: none; position: absolute; top: 66px; left: 0; right: 0; background: var(--maroon); padding: 1rem 5%; flex-direction: column; gap: 0.2rem; }
+      .nav-links.open { display: flex; }
+      .hamburger { display: flex; }
+      .categories { grid-template-columns: 1fr; }
+      .carousel-card { flex: 0 0 175px; }
+      .cart-sidebar { width: 100vw; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ══ CART OVERLAY ══ -->
+<div class="cart-overlay" id="cartOverlay" onclick="closeCart()"></div>
+
+<!-- ══ CART SIDEBAR ══ -->
+<div class="cart-sidebar" id="cartSidebar">
+  <div class="cart-header">
+    <h3>🛒 Your Cart</h3>
+    <button class="cart-close" onclick="closeCart()">✕</button>
+  </div>
+  <div class="cart-items" id="cartItems">
+    <div class="cart-empty">
+      <span>🌸</span>
+      <p>Your cart is empty.<br>Add some flowers!</p>
+    </div>
+  </div>
+  <div class="cart-footer" id="cartFooter" style="display:none">
+    <div class="cart-subtotal">
+      <span>Subtotal</span>
+      <span id="cartSubtotal">Rs. 0</span>
+    </div>
+    <div class="cart-subtotal">
+      <span>Shipping</span>
+      <span>Calculated at checkout</span>
+    </div>
+    <div class="cart-total">
+      <span>Total</span>
+      <span id="cartTotal">Rs. 0</span>
+    </div>
+    <button class="checkout-btn" onclick="checkout()">Proceed to Checkout →</button>
+    <button class="continue-btn" onclick="closeCart()">Continue Shopping</button>
+  </div>
+</div>
+
+<!-- ══ NAV ══ -->
+<nav>
+  <div class="logo" onclick="showPage('home')">The<span>florasan</span></div>
+  <ul class="nav-links" id="navLinks">
+    <li><a href="#" onclick="showPage('home')" id="nav-home" class="active">Home</a></li>
+    <li><a href="#" onclick="showPage('bouquets')" id="nav-bouquets">Pipe Cleaner Bouquets</a></li>
+    <li><a href="#" onclick="showPage('singles')" id="nav-singles">Single Flowers</a></li>
+    <li><a href="#" onclick="showPage('contact')" id="nav-contact">Contact</a></li>
+  </ul>
+  <div class="nav-right">
+    <button class="nav-cart-btn" onclick="openCart()">
+      🛒 Cart <span class="cart-count" id="cartCount">0</span>
+    </button>
+    <div class="hamburger" id="hamburger" onclick="toggleMenu()">
+      <span></span><span></span><span></span>
+    </div>
+  </div>
+</nav>
+
+<!-- ═══════════ PAGE: HOME ═══════════ -->
+<div class="page active" id="page-home">
+  <section class="hero">
+    <div class="hero-badge">✦ Handcrafted · One of a Kind · Made in Pakistan</div>
+    <h1>Flowers That Bloom <em>Forever</em></h1>
+    <p>Handmade pipe cleaner bouquets and single stems — vibrant, lasting, and uniquely yours for every occasion.</p>
+    <div class="hero-btns">
+      <button class="btn-yellow" onclick="showPage('bouquets')">Shop Bouquets 💐</button>
+      <button class="btn-outline-white" onclick="showPage('singles')">Single Flowers 🌸</button>
+    </div>
+  </section>
+
+  <section class="carousel-section">
+    <h2 class="section-title">Our Single Flowers</h2>
+    <p class="section-sub">A glimpse of what we make — each one handcrafted with care</p>
+    <div class="carousel-wrapper">
+      <div class="carousel-track" id="carouselTrack">
+        <div class="carousel-card" onclick="showPage('singles')">
+          <div class="carousel-card-img" style="background:linear-gradient(135deg,#fce7f3,#fdf2f8)">🌹</div>
+          <div class="carousel-card-info"><h4>Classic Rose</h4><p>Timeless beauty in red or soft pink</p><span class="flower-tag" style="background:#fce7f3;color:#be185d">Bestseller</span></div>
+        </div>
+        <div class="carousel-card" onclick="showPage('singles')">
+          <div class="carousel-card-img" style="background:linear-gradient(135deg,#fef3c7,#fffbeb)">🌻</div>
+          <div class="carousel-card-info"><h4>Sunflower</h4><p>Bright yellow petals with a warm center</p><span class="flower-tag" style="background:#fef3c7;color:#b45309">Summer Vibe</span></div>
+        </div>
+        <div class="carousel-card" onclick="showPage('singles')">
+          <div class="carousel-card-img" style="background:linear-gradient(135deg,#eff6ff,#dbeafe)">💙</div>
+          <div class="carousel-card-info"><h4>Blue Iris</h4><p>Elegant and bold — a rare color beauty</p><span class="flower-tag" style="background:#dbeafe;color:#1d4ed8">Rare Find</span></div>
+        </div>
+        <div class="carousel-card" onclick="showPage('singles')">
+          <div class="carousel-card-img" style="background:linear-gradient(135deg,#f5f3ff,#ede9fe)">🌷</div>
+          <div class="carousel-card-info"><h4>Lavender Tulip</h4><p>Soft purple petals for a dreamy feel</p><span class="flower-tag" style="background:#ede9fe;color:#6d28d9">Dreamy</span></div>
+        </div>
+        <div class="carousel-card" onclick="showPage('singles')">
+          <div class="carousel-card-img" style="background:linear-gradient(135deg,#fff7ed,#ffedd5)">🌺</div>
+          <div class="carousel-card-info"><h4>Coral Hibiscus</h4><p>Tropical warmth in every petal</p><span class="flower-tag" style="background:#ffedd5;color:#c2410c">Tropical</span></div>
+        </div>
+        <div class="carousel-card" onclick="showPage('singles')">
+          <div class="carousel-card-img" style="background:linear-gradient(135deg,#f0fdf4,#dcfce7)">🌿</div>
+          <div class="carousel-card-info"><h4>White Daisy</h4><p>Simple, pure, and endlessly charming</p><span class="flower-tag" style="background:#dcfce7;color:#15803d">Classic</span></div>
+        </div>
+        <div class="carousel-card" onclick="showPage('singles')">
+          <div class="carousel-card-img" style="background:linear-gradient(135deg,#fdf2f8,#fce7f3)">🌸</div>
+          <div class="carousel-card-info"><h4>Cherry Blossom</h4><p>Delicate pink blooms, everlasting</p><span class="flower-tag" style="background:#fce7f3;color:#9d174d">Delicate</span></div>
+        </div>
+        <div class="carousel-card" onclick="showPage('singles')">
+          <div class="carousel-card-img" style="background:linear-gradient(135deg,#fefce8,#fef9c3)">🌼</div>
+          <div class="carousel-card-info"><h4>Yellow Marigold</h4><p>Cheerful and full — a joy in any room</p><span class="flower-tag" style="background:#fef9c3;color:#a16207">Cheerful</span></div>
+        </div>
+        <div class="carousel-card" onclick="showPage('singles')">
+          <div class="carousel-card-img" style="background:linear-gradient(135deg,#f0f9ff,#e0f2fe)">❄️</div>
+          <div class="carousel-card-info"><h4>Baby Blue Rose</h4><p>Cool sky tones in a classic rose shape</p><span class="flower-tag" style="background:#e0f2fe;color:#0369a1">Cool Tones</span></div>
+        </div>
+      </div>
+    </div>
+    <div class="carousel-controls">
+      <button class="carousel-btn" onclick="carouselPrev()">&#8592;</button>
+      <div class="carousel-dots" id="carouselDots"></div>
+      <button class="carousel-btn" onclick="carouselNext()">&#8594;</button>
+    </div>
+  </section>
+
+  <div style="background:var(--cream);padding:1rem 5% 4rem">
+    <h2 class="section-title" style="margin-bottom:0.4rem">Browse Our Shop</h2>
+    <p class="section-sub" style="margin-bottom:2rem">Choose your favourite</p>
+    <div class="categories">
+      <a class="cat-card cat-bouquets" onclick="showPage('bouquets')">
+        <span class="cat-icon">💐</span>
+        <h3>Pipe Cleaner Bouquets</h3>
+        <p>Full arrangements from 5 to 20+ stems. Perfect for gifting, decoration, or just because.</p>
+        <span class="cat-link">Shop Bouquets →</span>
+      </a>
+      <a class="cat-card cat-singles" onclick="showPage('singles')">
+        <span class="cat-icon">🌹</span>
+        <h3>Single Flowers</h3>
+        <p>Individual handmade stems in every color and flower type. Build your own arrangement.</p>
+        <span class="cat-link">Shop Singles →</span>
+      </a>
+    </div>
+  </div>
+
+  <section class="why-section">
+    <h2 class="section-title">Why Theflorasan?</h2>
+    <p class="section-sub">More than flowers — lasting keepsakes</p>
+    <div class="why-grid">
+      <div class="why-item"><span class="why-icon">✋</span><h4>100% Handmade</h4><p>Every petal and stem shaped by hand — no machines, ever.</p></div>
+      <div class="why-item"><span class="why-icon">♾️</span><h4>Lasts Forever</h4><p>Pipe cleaner flowers never wilt, drop petals, or need water.</p></div>
+      <div class="why-item"><span class="why-icon">🎨</span><h4>Any Color</h4><p>Choose from dozens of colors — or request something custom.</p></div>
+      <div class="why-item"><span class="why-icon">💌</span><h4>Custom Orders</h4><p>Have a vision? We'll bring it to life just for you.</p></div>
+    </div>
+  </section>
+</div>
+
+<!-- ═══════════ PAGE: BOUQUETS ═══════════ -->
+<div class="page" id="page-bouquets">
+  <div class="page-hero bouquets-hero">
+    <h1>💐 Pipe Cleaner Bouquets</h1>
+    <p>Full handmade arrangements — from sweet minis to showstopping bouquets for every occasion.</p>
+  </div>
+  <div class="filter-bar">
+    <button class="filter-btn active" onclick="filterProducts(this,'all','bouquets')">All</button>
+    <button class="filter-btn" onclick="filterProducts(this,'mini','bouquets')">Mini (5 stems)</button>
+    <button class="filter-btn" onclick="filterProducts(this,'medium','bouquets')">Medium (10 stems)</button>
+    <button class="filter-btn" onclick="filterProducts(this,'full','bouquets')">Full (12+ stems)</button>
+    <button class="filter-btn" onclick="filterProducts(this,'custom','bouquets')">Custom</button>
+  </div>
+  <div class="products-section">
+    <div class="products-grid" id="bouquets-grid">
+
+      <div class="product-card" data-cat="mini">
+        <div class="product-img" style="background:linear-gradient(135deg,#fce7f3,#fdf2f8)">💐<span class="product-badge badge-pop">Popular</span></div>
+        <div class="product-info">
+          <h3>Rosy Pink Mini Bouquet</h3>
+          <div class="colors-row"><div class="color-dot" style="background:#f9a8d4"></div><div class="color-dot" style="background:#be185d"></div><div class="color-dot" style="background:#fce7f3"></div></div>
+          <p>5 handmade roses in soft pink shades. Tied with a satin ribbon. Perfect desk or gift size.</p>
+          <div class="product-meta">
+            <span class="price">Rs. 2,200</span>
+            <button class="add-btn" onclick="addToCart(this,'Rosy Pink Mini Bouquet',2200,'💐')">Add to Cart</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="product-card" data-cat="mini">
+        <div class="product-img" style="background:linear-gradient(135deg,#fef3c7,#fffbeb)">🌻<span class="product-badge badge-new">New</span></div>
+        <div class="product-info">
+          <h3>Sunshine Mini Bouquet</h3>
+          <div class="colors-row"><div class="color-dot" style="background:#fbbf24"></div><div class="color-dot" style="background:#f59e0b"></div><div class="color-dot" style="background:#fde68a"></div></div>
+          <p>5 sunflowers and daisies in warm yellow tones. Cheerful and bright for any space.</p>
+          <div class="product-meta">
+            <span class="price">Rs. 2,000</span>
+            <button class="add-btn" onclick="addToCart(this,'Sunshine Mini Bouquet',2000,'🌻')">Add to Cart</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="product-card" data-cat="medium">
+        <div class="product-img" style="background:linear-gradient(135deg,#fdf2f8,#fce7f3)">🌺</div>
+        <div class="product-info">
+          <h3>Maroon & Blush Bouquet</h3>
+          <div class="colors-row"><div class="color-dot" style="background:#7b1d3a"></div><div class="color-dot" style="background:#f9a8d4"></div><div class="color-dot" style="background:#fce7f3"></div></div>
+          <p>10 stems mixing deep maroon and soft blush roses. Elegant for anniversaries and birthdays.</p>
+          <div class="product-meta">
+            <span class="price">Rs. 3,800</span>
+            <button class="add-btn" onclick="addToCart(this,'Maroon & Blush Bouquet',3800,'🌺')">Add to Cart</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="product-card" data-cat="medium">
+        <div class="product-img" style="background:linear-gradient(135deg,#dbeafe,#eff6ff)">💙</div>
+        <div class="product-info">
+          <h3>Blue Sky Bouquet</h3>
+          <div class="colors-row"><div class="color-dot" style="background:#3b82f6"></div><div class="color-dot" style="background:#93c5fd"></div><div class="color-dot" style="background:#bfdbfe"></div></div>
+          <p>10 blue irises and roses in sky blue shades. A rare and stunning statement bouquet.</p>
+          <div class="product-meta">
+            <span class="price">Rs. 4,000</span>
+            <button class="add-btn" onclick="addToCart(this,'Blue Sky Bouquet',4000,'💙')">Add to Cart</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="product-card" data-cat="full">
+        <div class="product-img" style="background:linear-gradient(135deg,#fce7f3,#eff6ff)">🌸<span class="product-badge badge-pop">Popular</span></div>
+        <div class="product-info">
+          <h3>Rainbow Full Bouquet</h3>
+          <div class="colors-row"><div class="color-dot" style="background:#f472b6"></div><div class="color-dot" style="background:#fbbf24"></div><div class="color-dot" style="background:#3b82f6"></div><div class="color-dot" style="background:#7b1d3a"></div></div>
+          <p>12 stems across all our signature colors — pink, yellow, maroon, and blue. A true showstopper.</p>
+          <div class="product-meta">
+            <span class="price">Rs. 5,500</span>
+            <button class="add-btn" onclick="addToCart(this,'Rainbow Full Bouquet',5500,'🌸')">Add to Cart</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="product-card" data-cat="full">
+        <div class="product-img" style="background:linear-gradient(135deg,#fdf0f4,#fce7f3)">🌹</div>
+        <div class="product-info">
+          <h3>Classic Red Rose Bouquet</h3>
+          <div class="colors-row"><div class="color-dot" style="background:#dc2626"></div><div class="color-dot" style="background:#7f1d1d"></div></div>
+          <p>12 deep red roses — a timeless gift for Valentine's Day, anniversaries, or just to say I love you.</p>
+          <div class="product-meta">
+            <span class="price">Rs. 5,800</span>
+            <button class="add-btn" onclick="addToCart(this,'Classic Red Rose Bouquet',5800,'🌹')">Add to Cart</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="product-card" data-cat="full">
+        <div class="product-img" style="background:linear-gradient(135deg,#fef3c7,#f0fdf4)">🌻</div>
+        <div class="product-info">
+          <h3>Garden Party Bouquet</h3>
+          <div class="colors-row"><div class="color-dot" style="background:#fbbf24"></div><div class="color-dot" style="background:#4ade80"></div><div class="color-dot" style="background:#f9a8d4"></div></div>
+          <p>15 mixed flowers — sunflowers, daisies, roses — in a vibrant garden-inspired arrangement.</p>
+          <div class="product-meta">
+            <span class="price">Rs. 6,800</span>
+            <button class="add-btn" onclick="addToCart(this,'Garden Party Bouquet',6800,'🌻')">Add to Cart</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="product-card" data-cat="custom">
+        <div class="product-img" style="background:linear-gradient(135deg,#fdf2f8,#eff6ff)">🎨<span class="product-badge badge-custom">Custom</span></div>
+        <div class="product-info">
+          <h3>Custom Bouquet Order</h3>
+          <div class="colors-row"><div class="color-dot" style="background:linear-gradient(135deg,#f472b6,#fbbf24)"></div><div class="color-dot" style="background:linear-gradient(135deg,#3b82f6,#7b1d3a)"></div></div>
+          <p>Tell us your colors, flowers, and occasion. We'll design a bouquet made just for you.</p>
+          <div class="product-meta">
+            <span class="price">From Rs. 1,500</span>
+            <button class="add-btn custom" onclick="showPage('contact')">Request Now</button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════ PAGE: SINGLES ═══════════ -->
+<div class="page" id="page-singles">
+  <div class="page-hero singles-hero">
+    <h1>🌸 Single Flowers</h1>
+    <p>Individual handmade stems — mix and match your own arrangement or gift a single perfect bloom.</p>
+  </div>
+  <div class="filter-bar">
+    <button class="filter-btn active" onclick="filterProducts(this,'all','singles')">All</button>
+    <button class="filter-btn" onclick="filterProducts(this,'rose','singles')">Roses</button>
+    <button class="filter-btn" onclick="filterProducts(this,'daisy','singles')">Daisies</button>
+    <button class="filter-btn" onclick="filterProducts(this,'exotic','singles')">Exotic</button>
+    <button class="filter-btn" onclick="filterProducts(this,'seasonal','singles')">Seasonal</button>
+  </div>
+  <div class="products-section">
+    <div class="products-grid" id="singles-grid">
+
+      <div class="product-card" data-cat="rose">
+        <div class="product-img" style="background:linear-gradient(135deg,#fce7f3,#fdf2f8)">🌹<span class="product-badge badge-pop">Popular</span></div>
+        <div class="product-info">
+          <h3>Classic Rose</h3>
+          <div class="colors-row"><div class="color-dot" style="background:#dc2626"></div><div class="color-dot" style="background:#f472b6"></div><div class="color-dot" style="background:#fff;border:1.5px solid #ddd"></div><div class="color-dot" style="background:#fbbf24"></div><div class="color-dot" style="background:#7b1d3a"></div></div>
+          <p>Our signature rose — available in 10+ colors. Stands 11" tall. Choose your shade at checkout.</p>
+          <div class="product-meta">
+            <span class="price">Rs. 450</span>
+            <button class="add-btn" onclick="addToCart(this,'Classic Rose',450,'🌹')">Add to Cart</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="product-card" data-cat="rose">
+        <div class="product-img" style="background:linear-gradient(135deg,#fdf0f4,#fce7f3)">🥀</div>
+        <div class="product-info">
+          <h3>Maroon Velvet Rose</h3>
+          <div class="colors-row"><div class="color-dot" style="background:#7b1d3a"></div><div class="color-dot" style="background:#9f1239"></div></div>
+          <p>A deep, dramatic rose in rich maroon — sophisticated and striking as a single stem or in a bundle.</p>
+          <div class="product-meta">
+            <span class="price">Rs. 500</span>
+            <button class="add-btn" onclick="addToCart(this,'Maroon Velvet Rose',500,'🥀')">Add to Cart</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="product-card" data-cat="rose">
+        <div class="product-img" style="background:linear-gradient(135deg,#dbeafe,#eff6ff)">💙<span class="product-badge badge-new">New</span></div>
+        <div class="product-info">
+          <h3>Blue Rose</h3>
+          <div class="colors-row"><div class="color-dot" style="background:#3b82f6"></div><div class="color-dot" style="background:#93c5fd"></div><div class="color-dot" style="background:#1d4ed8"></div></div>
+          <p>What doesn't exist in nature, we make by hand! A true blue rose — a magical and unique gift.</p>
+          <div class="product-meta">
+            <span class="price">Rs. 500</span>
+            <button class="add-btn" onclick="addToCart(this,'Blue Rose',500,'💙')">Add to Cart</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="product-card" data-cat="daisy">
+        <div class="product-img" style="background:linear-gradient(135deg,#f0fdf4,#dcfce7)">🌼</div>
+        <div class="product-info">
+          <h3>White Daisy</h3>
+          <div class="colors-row"><div class="color-dot" style="background:#fff;border:1.5px solid #ddd"></div><div class="color-dot" style="background:#fbbf24"></div></div>
+          <p>A classic white daisy with a golden center. Simple, pure, and endlessly charming.</p>
+          <div class="product-meta">
+            <span class="price">Rs. 400</span>
+            <button class="add-btn" onclick="addToCart(this,'White Daisy',400,'🌼')">Add to Cart</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="product-card" data-cat="daisy">
+        <div class="product-img" style="background:linear-gradient(135deg,#fef3c7,#fffbeb)">🌻</div>
+        <div class="product-info">
+          <h3>Sunflower</h3>
+          <div class="colors-row"><div class="color-dot" style="background:#fbbf24"></div><div class="color-dot" style="background:#f59e0b"></div><div class="color-dot" style="background:#78350f"></div></div>
+          <p>Bright and bold sunflower — guaranteed to lift any mood. Stands 12" tall.</p>
+          <div class="product-meta">
+            <span class="price">Rs. 450</span>
+            <button class="add-btn" onclick="addToCart(this,'Sunflower',450,'🌻')">Add to Cart</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="product-card" data-cat="daisy">
+        <div class="product-img" style="background:linear-gradient(135deg,#fce7f3,#fdf2f8)">🌸</div>
+        <div class="product-info">
+          <h3>Pink Gerbera Daisy</h3>
+          <div class="colors-row"><div class="color-dot" style="background:#f472b6"></div><div class="color-dot" style="background:#fb7185"></div><div class="color-dot" style="background:#fda4af"></div></div>
+          <p>A fluffy, full daisy in vibrant pink — fun and youthful with a big personality.</p>
+          <div class="product-meta">
+            <span class="price">Rs. 400</span>
+            <button class="add-btn" onclick="addToCart(this,'Pink Gerbera Daisy',400,'🌸')">Add to Cart</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="product-card" data-cat="exotic">
+        <div class="product-img" style="background:linear-gradient(135deg,#fff7ed,#ffedd5)">🌺</div>
+        <div class="product-info">
+          <h3>Coral Hibiscus</h3>
+          <div class="colors-row"><div class="color-dot" style="background:#fb923c"></div><div class="color-dot" style="background:#f97316"></div><div class="color-dot" style="background:#fed7aa"></div></div>
+          <p>Tropical hibiscus in warm coral and orange tones — bold and exotic with ruffled petals.</p>
+          <div class="product-meta">
+            <span class="price">Rs. 550</span>
+            <button class="add-btn" onclick="addToCart(this,'Coral Hibiscus',550,'🌺')">Add to Cart</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="product-card" data-cat="exotic">
+        <div class="product-img" style="background:linear-gradient(135deg,#f5f3ff,#ede9fe)">🌷</div>
+        <div class="product-info">
+          <h3>Lavender Tulip</h3>
+          <div class="colors-row"><div class="color-dot" style="background:#a78bfa"></div><div class="color-dot" style="background:#7c3aed"></div><div class="color-dot" style="background:#c4b5fd"></div></div>
+          <p>An elegant tulip in soft lavender and purple tones — romantic and serene.</p>
+          <div class="product-meta">
+            <span class="price">Rs. 500</span>
+            <button class="add-btn" onclick="addToCart(this,'Lavender Tulip',500,'🌷')">Add to Cart</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="product-card" data-cat="exotic">
+        <div class="product-img" style="background:linear-gradient(135deg,#fdf4ff,#fae8ff)">🌸<span class="product-badge badge-new">New</span></div>
+        <div class="product-info">
+          <h3>Cherry Blossom Stem</h3>
+          <div class="colors-row"><div class="color-dot" style="background:#fbcfe8"></div><div class="color-dot" style="background:#f9a8d4"></div><div class="color-dot" style="background:#f472b6"></div></div>
+          <p>A branching cherry blossom stem with multiple blooms — delicate and truly special.</p>
+          <div class="product-meta">
+            <span class="price">Rs. 700</span>
+            <button class="add-btn" onclick="addToCart(this,'Cherry Blossom Stem',700,'🌸')">Add to Cart</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="product-card" data-cat="seasonal">
+        <div class="product-img" style="background:linear-gradient(135deg,#fef9c3,#fef3c7)">🌼</div>
+        <div class="product-info">
+          <h3>Yellow Marigold</h3>
+          <div class="colors-row"><div class="color-dot" style="background:#fbbf24"></div><div class="color-dot" style="background:#d97706"></div><div class="color-dot" style="background:#fde68a"></div></div>
+          <p>Full, round marigold blooms bursting with warmth — a seasonal favourite all year round.</p>
+          <div class="product-meta">
+            <span class="price">Rs. 450</span>
+            <button class="add-btn" onclick="addToCart(this,'Yellow Marigold',450,'🌼')">Add to Cart</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="product-card" data-cat="seasonal">
+        <div class="product-img" style="background:linear-gradient(135deg,#fce7f3,#dbeafe)">🌹</div>
+        <div class="product-info">
+          <h3>Valentine's Special Rose</h3>
+          <div class="colors-row"><div class="color-dot" style="background:#dc2626"></div><div class="color-dot" style="background:#f472b6"></div></div>
+          <p>Extra-detailed rose with layered petals — our most intricate single stem, perfect for Valentine's.</p>
+          <div class="product-meta">
+            <span class="price">Rs. 750</span>
+            <button class="add-btn" onclick="addToCart(this,"Valentine's Special Rose",750,'🌹')">Add to Cart</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="product-card" data-cat="seasonal">
+        <div class="product-img" style="background:linear-gradient(135deg,#fff7ed,#fef3c7)">🎃</div>
+        <div class="product-info">
+          <h3>Autumn Bloom</h3>
+          <div class="colors-row"><div class="color-dot" style="background:#b45309"></div><div class="color-dot" style="background:#d97706"></div><div class="color-dot" style="background:#dc2626"></div></div>
+          <p>Rich autumn colors in a mixed bloom — oranges, reds, and golds for the fall season.</p>
+          <div class="product-meta">
+            <span class="price">Rs. 550</span>
+            <button class="add-btn" onclick="addToCart(this,'Autumn Bloom',550,'🎃')">Add to Cart</button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════ PAGE: CONTACT ═══════════ -->
+<div class="page" id="page-contact">
+  <div class="page-hero contact-hero">
+    <h1>💌 Get in Touch</h1>
+    <p>Questions, custom orders, or just want to say hi — we'd love to hear from you.</p>
+  </div>
+  <div class="contact-section">
+    <div class="contact-form-box">
+      <h3>Send Us a Message</h3>
+      <div class="form-group"><label>Your Name</label><input type="text" placeholder="e.g. Ayesha Khan"/></div>
+      <div class="form-group"><label>Phone / WhatsApp</label><input type="tel" placeholder="+92 300 0000000"/></div>
+      <div class="form-group"><label>Email Address</label><input type="email" placeholder="ayesha@email.com"/></div>
+      <div class="form-group">
+        <label>Subject</label>
+        <select>
+          <option>General Question</option>
+          <option>Custom Order Request</option>
+          <option>Order Status</option>
+          <option>Wholesale / Bulk Order</option>
+          <option>Something Else</option>
+        </select>
+      </div>
+      <div class="form-group"><label>Message</label><textarea placeholder="Tell us what you need — colors, occasion, quantity, anything!"></textarea></div>
+      <button class="submit-btn" onclick="handleSubmit()">Send Message 💌</button>
+    </div>
+    <div class="contact-info">
+      <div class="info-card"><div class="info-icon icon-pink">📱</div><div class="info-text"><h4>WhatsApp / Instagram</h4><p>Fastest way to reach us!<br><strong>@theflorasan</strong></p></div></div>
+      <div class="info-card"><div class="info-icon icon-yellow">✉️</div><div class="info-text"><h4>Email</h4><p>We reply within 24 hours.<br><strong>hello@theflorasan.com</strong></p></div></div>
+      <div class="info-card"><div class="info-icon icon-blue">📦</div><div class="info-text"><h4>Delivery in Pakistan</h4><p>We ship nationwide via TCS / Leopards.<br>Delivery in 2–4 working days.</p></div></div>
+      <div class="info-card"><div class="info-icon icon-maroon">🎨</div><div class="info-text"><h4>Custom Orders</h4><p>Share your colors, occasion, and vision — we'll make it happen just for you.</p></div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ FOOTER ══ -->
+<footer>
+  <div class="footer-grid">
+    <div class="footer-brand">
+      <span class="logo">The<span>florasan</span></span>
+      <p>Handmade pipe cleaner flowers and bouquets — crafted with love in Pakistan, built to last forever.</p>
+    </div>
+    <div class="footer-col">
+      <h4>Shop</h4>
+      <ul>
+        <li><a onclick="showPage('bouquets')">Pipe Cleaner Bouquets</a></li>
+        <li><a onclick="showPage('singles')">Single Flowers</a></li>
+        <li><a onclick="showPage('contact')">Custom Orders</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Help</h4>
+      <ul>
+        <li><a onclick="showPage('contact')">Contact Us</a></li>
+        <li><a href="#">Shipping Policy</a></li>
+        <li><a href="#">Returns</a></li>
+        <li><a href="#">FAQ</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <p>© 2025 Theflorasan · Made with 💗 in Pakistan · <a href="#" style="color:var(--pink)">Instagram</a></p>
+  </div>
+</footer>
+
+<!-- ══ TOAST ══ -->
+<div class="toast" id="toast"></div>
+
+<script>
+  // ══════════ CART STATE ══════════
+  let cart = [];
+
+  function addToCart(btn, name, price, emoji) {
+    const existing = cart.find(i => i.name === name);
+    if (existing) {
+      existing.qty++;
+    } else {
+      cart.push({ name, price, emoji, qty: 1 });
+    }
+    updateCartUI();
+    openCart();
+
+    // Button flash
+    btn.textContent = '✓ Added!';
+    btn.classList.add('added');
+    setTimeout(() => { btn.textContent = 'Add to Cart'; btn.classList.remove('added'); }, 1500);
+  }
+
+  function removeFromCart(name) {
+    cart = cart.filter(i => i.name !== name);
+    updateCartUI();
+  }
+
+  function changeQty(name, delta) {
+    const item = cart.find(i => i.name === name);
+    if (!item) return;
+    item.qty += delta;
+    if (item.qty <= 0) removeFromCart(name);
+    else updateCartUI();
+  }
+
+  function updateCartUI() {
+    const total = cart.reduce((s, i) => s + i.price * i.qty, 0);
+    const count = cart.reduce((s, i) => s + i.qty, 0);
+
+    // Update count badge
+    document.getElementById('cartCount').textContent = count;
+
+    const itemsEl = document.getElementById('cartItems');
+    const footerEl = document.getElementById('cartFooter');
+
+    if (cart.length === 0) {
+      itemsEl.innerHTML = '<div class="cart-empty"><span>🌸</span><p>Your cart is empty.<br>Add some flowers!</p></div>';
+      footerEl.style.display = 'none';
+      return;
+    }
+
+    footerEl.style.display = 'block';
+
+    itemsEl.innerHTML = cart.map(item => `
+      <div class="cart-item">
+        <div class="cart-item-img">${item.emoji}</div>
+        <div class="cart-item-info">
+          <h4>${item.name}</h4>
+          <div class="cart-item-price">Rs. ${(item.price).toLocaleString()}</div>
+          <div class="cart-item-controls">
+            <button class="qty-btn" onclick="changeQty('${item.name}',-1)">−</button>
+            <span class="qty-num">${item.qty}</span>
+            <button class="qty-btn" onclick="changeQty('${item.name}',1)">+</button>
+          </div>
+        </div>
+        <button class="remove-btn" onclick="removeFromCart('${item.name}')" title="Remove">✕</button>
+      </div>
+    `).join('');
+
+    document.getElementById('cartSubtotal').textContent = 'Rs. ' + total.toLocaleString();
+    document.getElementById('cartTotal').textContent = 'Rs. ' + total.toLocaleString();
+  }
+
+  function openCart() {
+    document.getElementById('cartSidebar').classList.add('open');
+    document.getElementById('cartOverlay').classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+  function closeCart() {
+    document.getElementById('cartSidebar').classList.remove('open');
+    document.getElementById('cartOverlay').classList.remove('open');
+    document.body.style.overflow = '';
+  }
+
+  function checkout() {
+    if (cart.length === 0) return;
+    showToast('Redirecting to checkout... 🛒');
+    // Replace this URL with your Shopify checkout or WhatsApp order link:
+    // window.open('https://theflorasan.myshopify.com/cart', '_blank');
+    // OR for WhatsApp orders:
+    const msg = cart.map(i => `${i.qty}x ${i.name} (Rs.${i.price})`).join(', ');
+    const total = cart.reduce((s,i)=>s+i.price*i.qty,0);
+    window.open(`https://wa.me/923000000000?text=Hi! I'd like to order: ${encodeURIComponent(msg)}. Total: Rs.${total}`, '_blank');
+  }
+
+  // ══════════ NAVIGATION ══════════
+  function showPage(name) {
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.nav-links a').forEach(a => a.classList.remove('active'));
+    document.getElementById('page-' + name).classList.add('active');
+    const navEl = document.getElementById('nav-' + name);
+    if (navEl) navEl.classList.add('active');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    document.getElementById('navLinks').classList.remove('open');
+    closeCart();
+  }
+
+  document.querySelectorAll('.nav-links a').forEach(a => a.addEventListener('click', e => e.preventDefault()));
+  document.querySelectorAll('.cat-card').forEach(c => c.addEventListener('click', e => e.preventDefault()));
+
+  function toggleMenu() { document.getElementById('navLinks').classList.toggle('open'); }
+
+  // ══════════ CAROUSEL ══════════
+  let carouselIndex = 0;
+  const totalCards = 9;
+
+  function getVisibleCards() {
+    return window.innerWidth < 480 ? 1 : window.innerWidth < 768 ? 2 : window.innerWidth < 1024 ? 3 : 4;
+  }
+  const maxIndex = () => Math.max(0, totalCards - getVisibleCards());
+
+  function updateCarousel() {
+    const cardWidth = 220 + 22;
+    document.getElementById('carouselTrack').style.transform = `translateX(-${carouselIndex * cardWidth}px)`;
+    document.querySelectorAll('.dot').forEach((d, i) => d.classList.toggle('active', i === carouselIndex));
+  }
+  function carouselNext() { carouselIndex = carouselIndex >= maxIndex() ? 0 : carouselIndex + 1; updateCarousel(); }
+  function carouselPrev() { carouselIndex = carouselIndex <= 0 ? maxIndex() : carouselIndex - 1; updateCarousel(); }
+
+  function buildDots() {
+    const dotsEl = document.getElementById('carouselDots');
+    dotsEl.innerHTML = '';
+    for (let i = 0; i <= maxIndex(); i++) {
+      const d = document.createElement('div');
+      d.className = 'dot' + (i === 0 ? ' active' : '');
+      d.onclick = () => { carouselIndex = i; updateCarousel(); };
+      dotsEl.appendChild(d);
+    }
+  }
+  buildDots();
+  setInterval(carouselNext, 3200);
+  window.addEventListener('resize', () => { carouselIndex = 0; buildDots(); updateCarousel(); });
+
+  // ══════════ FILTER ══════════
+  function filterProducts(btn, cat, page) {
+    btn.closest('.filter-bar').querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    document.querySelectorAll('#' + page + '-grid .product-card').forEach(card => {
+      card.style.display = (cat === 'all' || card.dataset.cat === cat) ? '' : 'none';
+    });
+  }
+
+  // ══════════ CONTACT ══════════
+  function handleSubmit() {
+    const btn = document.querySelector('.submit-btn');
+    btn.textContent = '✓ Message Sent!';
+    btn.style.background = '#16a34a';
+    setTimeout(() => { btn.textContent = 'Send Message 💌'; btn.style.background = ''; }, 3000);
+  }
+
+  // ══════════ TOAST ══════════
+  function showToast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 2500);
+  }
+</script>
+</body>
+</html>

@@ -1,0 +1,17 @@
+Drop your single flower product photos in this folder.
+
+Recommended naming:
+- classic-rose.jpg
+- maroon-velvet-rose.jpg
+- blue-rose.jpg
+- white-daisy.jpg
+- sunflower.jpg
+- pink-gerbera-daisy.jpg
+- coral-hibiscus.jpg
+- lavender-tulip.jpg
+- cherry-blossom-stem.jpg
+- yellow-marigold.jpg
+- valentines-rose.jpg
+- autumn-bloom.jpg
+
+Recommended size: 800x800px, JPG format, under 300KB each.

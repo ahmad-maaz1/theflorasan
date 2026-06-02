@@ -1,0 +1,12 @@
+Drop your bouquet product photos in this folder.
+
+Recommended naming:
+- mini-pink-bouquet.jpg
+- sunshine-mini-bouquet.jpg
+- maroon-blush-bouquet.jpg
+- blue-sky-bouquet.jpg
+- rainbow-full-bouquet.jpg
+- red-rose-bouquet.jpg
+- garden-party-bouquet.jpg
+
+Recommended size: 800x800px, JPG format, under 300KB each.
