@@ -398,6 +398,128 @@
     .footer-col ul li a:hover { color: var(--pink); }
     .footer-bottom { border-top: 1px solid rgba(255,255,255,0.08); padding-top: 1.2rem; text-align: center; font-size: 0.78rem; }
 
+    /* ══ CHECKOUT MODAL ══ */
+    .checkout-overlay {
+      position: fixed; inset: 0; background: rgba(0,0,0,0.55);
+      z-index: 3000; opacity: 0; pointer-events: none; transition: opacity 0.3s;
+      display: flex; align-items: center; justify-content: center; padding: 1rem;
+    }
+    .checkout-overlay.open { opacity: 1; pointer-events: all; }
+    .checkout-modal {
+      background: #fff; border-radius: 24px; width: 100%; max-width: 560px;
+      max-height: 92vh; overflow-y: auto;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+      transform: scale(0.95); transition: transform 0.3s;
+    }
+    .checkout-overlay.open .checkout-modal { transform: scale(1); }
+
+    .checkout-modal-header {
+      padding: 1.4rem 1.8rem; background: var(--maroon);
+      display: flex; justify-content: space-between; align-items: center;
+      border-radius: 24px 24px 0 0; position: sticky; top: 0; z-index: 1;
+    }
+    .checkout-modal-header h3 { font-family: 'Playfair Display', serif; color: #fff; font-size: 1.2rem; }
+    .checkout-close {
+      background: rgba(255,255,255,0.15); border: none; color: #fff;
+      width: 34px; height: 34px; border-radius: 50%; font-size: 1rem;
+      cursor: pointer; display: flex; align-items: center; justify-content: center;
+    }
+    .checkout-close:hover { background: rgba(255,255,255,0.3); }
+
+    /* Steps indicator */
+    .checkout-steps {
+      display: flex; padding: 1.2rem 1.8rem 0;
+      gap: 0; border-bottom: 1px solid #f0e8e0;
+    }
+    .checkout-step {
+      flex: 1; text-align: center; padding-bottom: 1rem;
+      font-size: 0.78rem; font-weight: 600; color: #ccc;
+      border-bottom: 3px solid transparent; transition: all 0.2s; cursor: default;
+    }
+    .checkout-step.active { color: var(--maroon); border-bottom-color: var(--maroon); }
+    .checkout-step.done { color: #16a34a; border-bottom-color: #16a34a; }
+    .step-num {
+      display: inline-flex; align-items: center; justify-content: center;
+      width: 22px; height: 22px; border-radius: 50%; font-size: 0.72rem;
+      background: #e5e7eb; color: #6b7280; margin-right: 5px; font-weight: 700;
+    }
+    .checkout-step.active .step-num { background: var(--maroon); color: #fff; }
+    .checkout-step.done .step-num { background: #16a34a; color: #fff; }
+
+    .checkout-body { padding: 1.6rem 1.8rem; }
+
+    /* Order summary inside checkout */
+    .co-summary {
+      background: var(--cream); border-radius: 14px; padding: 1rem 1.2rem; margin-bottom: 1.4rem;
+    }
+    .co-summary h4 { font-size: 0.82rem; font-weight: 700; color: var(--gray); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 0.7rem; }
+    .co-item { display: flex; justify-content: space-between; font-size: 0.85rem; padding: 0.25rem 0; }
+    .co-item span:last-child { font-weight: 600; color: var(--maroon); }
+    .co-divider { border: none; border-top: 1px solid #e5e7eb; margin: 0.6rem 0; }
+    .co-total { display: flex; justify-content: space-between; font-size: 1rem; font-weight: 700; }
+    .co-total span:last-child { color: var(--maroon); }
+
+    /* Form fields */
+    .co-section-title { font-size: 0.92rem; font-weight: 700; color: var(--dark); margin-bottom: 1rem; }
+    .co-row { display: grid; grid-template-columns: 1fr 1fr; gap: 0.8rem; margin-bottom: 0.8rem; }
+    .co-row.full { grid-template-columns: 1fr; }
+    .co-field label { display: block; font-size: 0.78rem; font-weight: 600; color: var(--gray); margin-bottom: 0.3rem; text-transform: uppercase; letter-spacing: 0.04em; }
+    .co-field input, .co-field select, .co-field textarea {
+      width: 100%; padding: 0.65rem 0.9rem; border: 1.5px solid #e5e7eb; border-radius: 10px;
+      font-size: 0.88rem; font-family: 'Inter', sans-serif; outline: none;
+      transition: border-color 0.2s; background: #fff;
+    }
+    .co-field input:focus, .co-field select:focus, .co-field textarea:focus { border-color: var(--maroon); }
+    .co-field textarea { resize: none; height: 70px; }
+
+    /* Payment methods */
+    .payment-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.8rem; margin-bottom: 1.2rem; }
+    .payment-option {
+      border: 2px solid #e5e7eb; border-radius: 14px; padding: 1rem;
+      cursor: pointer; transition: all 0.2s; text-align: center;
+      position: relative;
+    }
+    .payment-option:hover { border-color: var(--pink-md); }
+    .payment-option.selected { border-color: var(--maroon); background: var(--maroon-lt); }
+    .payment-option input[type=radio] { position: absolute; opacity: 0; }
+    .payment-icon { font-size: 1.8rem; display: block; margin-bottom: 0.4rem; }
+    .payment-name { font-size: 0.85rem; font-weight: 700; color: var(--dark); }
+    .payment-desc { font-size: 0.72rem; color: var(--gray); margin-top: 0.2rem; }
+    .payment-option.selected .payment-name { color: var(--maroon); }
+    .payment-details-box {
+      background: var(--yellow-lt); border: 1px solid #fde68a; border-radius: 12px;
+      padding: 1rem 1.2rem; margin-bottom: 1.2rem; font-size: 0.85rem; line-height: 1.6;
+      display: none;
+    }
+    .payment-details-box.show { display: block; }
+    .payment-details-box strong { color: var(--maroon); }
+
+    /* Confirmation screen */
+    .order-confirmed {
+      text-align: center; padding: 2rem 1rem;
+    }
+    .order-confirmed .confetti { font-size: 3.5rem; margin-bottom: 1rem; display: block; }
+    .order-confirmed h3 { font-family: 'Playfair Display', serif; font-size: 1.6rem; color: var(--maroon); margin-bottom: 0.5rem; }
+    .order-confirmed p { color: var(--gray); font-size: 0.9rem; line-height: 1.6; margin-bottom: 1.5rem; }
+    .order-id { background: var(--maroon-lt); border-radius: 10px; padding: 0.8rem 1.2rem; font-size: 0.9rem; margin-bottom: 1.5rem; }
+    .order-id strong { color: var(--maroon); font-size: 1.1rem; }
+
+    /* Nav buttons */
+    .checkout-nav { display: flex; gap: 0.8rem; margin-top: 1.4rem; }
+    .co-btn-back {
+      flex: 1; background: #f3f4f6; color: var(--gray); border: none;
+      padding: 0.8rem; border-radius: 35px; font-size: 0.9rem; font-weight: 600;
+      cursor: pointer; transition: all 0.2s;
+    }
+    .co-btn-back:hover { background: #e5e7eb; }
+    .co-btn-next {
+      flex: 2; background: var(--maroon); color: #fff; border: none;
+      padding: 0.8rem; border-radius: 35px; font-size: 0.9rem; font-weight: 700;
+      cursor: pointer; transition: all 0.2s;
+    }
+    .co-btn-next:hover { background: var(--pink-md); }
+    .co-btn-next:disabled { background: #ccc; cursor: not-allowed; }
+
     /* ══ TOAST ══ */
     .toast {
       position: fixed; bottom: 1.5rem; left: 50%; transform: translateX(-50%) translateY(80px);
@@ -407,6 +529,31 @@
       box-shadow: 0 4px 20px rgba(0,0,0,0.2);
     }
     .toast.show { transform: translateX(-50%) translateY(0); }
+
+    /* ══ WHATSAPP FLOAT ══ */
+    .wa-float {
+      position: fixed; bottom: 1.6rem; left: 1.6rem; z-index: 999;
+      display: flex; align-items: center; gap: 0; cursor: pointer;
+      filter: drop-shadow(0 4px 12px rgba(37,211,102,0.4));
+      transition: filter 0.2s;
+    }
+    .wa-float:hover { filter: drop-shadow(0 6px 18px rgba(37,211,102,0.6)); }
+    .wa-icon {
+      width: 56px; height: 56px; background: #25D366; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0; transition: transform 0.2s;
+    }
+    .wa-float:hover .wa-icon { transform: scale(1.1); }
+    .wa-icon svg { width: 30px; height: 30px; fill: #fff; }
+    .wa-label {
+      background: #fff; color: #075e54; font-size: 0.8rem; font-weight: 700;
+      padding: 0.45rem 1rem 0.45rem 0.6rem; border-radius: 0 25px 25px 0;
+      white-space: nowrap; max-width: 0; overflow: hidden;
+      transition: max-width 0.35s ease, padding 0.35s ease, opacity 0.2s;
+      opacity: 0; box-shadow: 2px 2px 10px rgba(0,0,0,0.08);
+      margin-left: -8px;
+    }
+    .wa-float:hover .wa-label { max-width: 180px; opacity: 1; padding: 0.45rem 1rem 0.45rem 1rem; }
 
     /* ══ RESPONSIVE ══ */
     @media (max-width: 680px) {
@@ -420,6 +567,16 @@
   </style>
 </head>
 <body>
+
+<!-- ══ WHATSAPP FLOAT ══ -->
+<a class="wa-float" href="https://wa.me/923083850850?text=Hi! I visited Theflorasan and have a question 🌸" target="_blank" rel="noopener">
+  <div class="wa-icon">
+    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+      <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+    </svg>
+  </div>
+  <div class="wa-label">Chat with us!</div>
+</a>
 
 <!-- ══ CART OVERLAY ══ -->
 <div class="cart-overlay" id="cartOverlay" onclick="closeCart()"></div>
@@ -451,6 +608,147 @@
     </div>
     <button class="checkout-btn" onclick="checkout()">Proceed to Checkout →</button>
     <button class="continue-btn" onclick="closeCart()">Continue Shopping</button>
+  </div>
+</div>
+
+<!-- ══ CHECKOUT MODAL ══ -->
+<div class="checkout-overlay" id="checkoutOverlay">
+  <div class="checkout-modal" id="checkoutModal">
+
+    <div class="checkout-modal-header">
+      <h3 id="checkoutTitle">Checkout</h3>
+      <button class="checkout-close" onclick="closeCheckout()">✕</button>
+    </div>
+
+    <div class="checkout-steps">
+      <div class="checkout-step active" id="cstep-1"><span class="step-num">1</span> Details</div>
+      <div class="checkout-step" id="cstep-2"><span class="step-num">2</span> Payment</div>
+      <div class="checkout-step" id="cstep-3"><span class="step-num">3</span> Confirm</div>
+    </div>
+
+    <div class="checkout-body">
+
+      <!-- STEP 1: Shipping Details -->
+      <div id="co-step1">
+        <div class="co-summary" id="co-summary-1"></div>
+        <div class="co-section-title">📦 Shipping Details</div>
+        <div class="co-row">
+          <div class="co-field"><label>First Name *</label><input id="co-fname" type="text" placeholder="Ayesha"/></div>
+          <div class="co-field"><label>Last Name *</label><input id="co-lname" type="text" placeholder="Khan"/></div>
+        </div>
+        <div class="co-row full">
+          <div class="co-field"><label>Phone / WhatsApp *</label><input id="co-phone" type="tel" placeholder="+92 300 0000000"/></div>
+        </div>
+        <div class="co-row full">
+          <div class="co-field"><label>Full Address *</label><input id="co-address" type="text" placeholder="House #, Street, Area"/></div>
+        </div>
+        <div class="co-row">
+          <div class="co-field"><label>City *</label><input id="co-city" type="text" placeholder="Lahore"/></div>
+          <div class="co-field">
+            <label>Province *</label>
+            <select id="co-province">
+              <option value="">Select...</option>
+              <option>Punjab</option>
+              <option>Sindh</option>
+              <option>KPK</option>
+              <option>Balochistan</option>
+              <option>Islamabad (ICT)</option>
+              <option>AJK</option>
+              <option>Gilgit-Baltistan</option>
+            </select>
+          </div>
+        </div>
+        <div class="co-row full">
+          <div class="co-field"><label>Order Notes (optional)</label><textarea id="co-notes" placeholder="Special instructions, color preferences, gift message..."></textarea></div>
+        </div>
+        <div class="checkout-nav">
+          <button class="co-btn-next" onclick="goToStep(2)">Continue to Payment →</button>
+        </div>
+      </div>
+
+      <!-- STEP 2: Payment -->
+      <div id="co-step2" style="display:none">
+        <div class="co-summary" id="co-summary-2"></div>
+        <div class="co-section-title">💳 Choose Payment Method</div>
+        <div class="payment-grid">
+          <div class="payment-option" onclick="selectPayment('cod',this)">
+            <input type="radio" name="payment" value="cod"/>
+            <span class="payment-icon">💵</span>
+            <div class="payment-name">Cash on Delivery</div>
+            <div class="payment-desc">Pay when you receive</div>
+          </div>
+          <div class="payment-option" onclick="selectPayment('jazzcash',this)">
+            <input type="radio" name="payment" value="jazzcash"/>
+            <span class="payment-icon">📱</span>
+            <div class="payment-name">JazzCash</div>
+            <div class="payment-desc">Mobile wallet transfer</div>
+          </div>
+          <div class="payment-option" onclick="selectPayment('easypaisa',this)">
+            <input type="radio" name="payment" value="easypaisa"/>
+            <span class="payment-icon">💚</span>
+            <div class="payment-name">Easypaisa</div>
+            <div class="payment-desc">Mobile wallet transfer</div>
+          </div>
+          <div class="payment-option" onclick="selectPayment('bank',this)">
+            <input type="radio" name="payment" value="bank"/>
+            <span class="payment-icon">🏦</span>
+            <div class="payment-name">Bank Transfer</div>
+            <div class="payment-desc">Online banking</div>
+          </div>
+        </div>
+
+        <!-- Payment instructions shown based on selection -->
+        <div class="payment-details-box" id="pay-info-cod">
+          ✅ <strong>Cash on Delivery</strong> — No advance payment needed. Pay the full amount to the courier when your order arrives. COD available across Pakistan.
+        </div>
+        <div class="payment-details-box" id="pay-info-jazzcash">
+          📱 <strong>JazzCash Transfer</strong><br/>
+          Send payment to: <strong>0308-3850850</strong> (Ahmad Maaz)<br/>
+          After placing your order, send a screenshot of the transfer to our WhatsApp. Your order will be confirmed once payment is verified.
+        </div>
+        <div class="payment-details-box" id="pay-info-easypaisa">
+          💚 <strong>Easypaisa Transfer</strong><br/>
+          Send payment to: <strong>0308-3850850</strong> (Ahmad Maaz)<br/>
+          After placing your order, send a screenshot of the transfer to our WhatsApp. Your order will be confirmed once payment is verified.
+        </div>
+        <div class="payment-details-box" id="pay-info-bank">
+          🏦 <strong>Bank Transfer</strong><br/>
+          Bank: <strong>HBL / Meezan / UBL</strong><br/>
+          Account Title: <strong>Ahmad Maaz</strong><br/>
+          Account No: <strong>XXXX-XXXX-XXXX</strong><br/>
+          After transfer, send a screenshot to our WhatsApp for confirmation.
+        </div>
+
+        <div class="checkout-nav">
+          <button class="co-btn-back" onclick="goToStep(1)">← Back</button>
+          <button class="co-btn-next" id="co-btn-confirm" onclick="goToStep(3)" disabled>Review Order →</button>
+        </div>
+      </div>
+
+      <!-- STEP 3: Confirm -->
+      <div id="co-step3" style="display:none">
+        <div class="co-section-title">✅ Review Your Order</div>
+        <div class="co-summary" id="co-summary-3"></div>
+        <div class="co-summary" id="co-address-summary" style="margin-top:0.8rem"></div>
+        <div class="checkout-nav">
+          <button class="co-btn-back" onclick="goToStep(2)">← Back</button>
+          <button class="co-btn-next" id="co-place-btn" onclick="placeOrder()">🌸 Place Order</button>
+        </div>
+      </div>
+
+      <!-- STEP 4: Success -->
+      <div id="co-step4" style="display:none">
+        <div class="order-confirmed">
+          <span class="confetti">🎉</span>
+          <h3>Order Placed!</h3>
+          <p>Thank you for your order! We'll confirm it shortly via WhatsApp.</p>
+          <div class="order-id">Order ID: <strong id="co-order-id">—</strong></div>
+          <p style="font-size:0.82rem;color:var(--gray)">Save your Order ID for tracking. We'll reach out on <strong id="co-confirm-phone"></strong> within a few hours.</p>
+          <button class="co-btn-next" style="max-width:220px;margin:1.2rem auto 0;display:block" onclick="closeCheckout();showPage('home')">Continue Shopping 🌸</button>
+        </div>
+      </div>
+
+    </div>
   </div>
 </div>
 
@@ -1017,13 +1315,8 @@
 
   function checkout() {
     if (cart.length === 0) return;
-    showToast('Redirecting to checkout... 🛒');
-    // Replace this URL with your Shopify checkout or WhatsApp order link:
-    // window.open('https://theflorasan.myshopify.com/cart', '_blank');
-    // OR for WhatsApp orders:
-    const msg = cart.map(i => `${i.qty}x ${i.name} (Rs.${i.price})`).join(', ');
-    const total = cart.reduce((s,i)=>s+i.price*i.qty,0);
-    window.open(`https://wa.me/923000000000?text=Hi! I'd like to order: ${encodeURIComponent(msg)}. Total: Rs.${total}`, '_blank');
+    closeCart();
+    openCheckout();
   }
 
   // ══════════ NAVIGATION ══════════
@@ -1090,6 +1383,191 @@
     btn.style.background = '#16a34a';
     setTimeout(() => { btn.textContent = 'Send Message 💌'; btn.style.background = ''; }, 3000);
   }
+
+  // ══════════ CHECKOUT ══════════
+  let selectedPayment = null;
+  let currentStep = 1;
+
+  function openCheckout() {
+    renderSummary('co-summary-1');
+    renderSummary('co-summary-2');
+    document.getElementById('checkoutOverlay').classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeCheckout() {
+    document.getElementById('checkoutOverlay').classList.remove('open');
+    document.body.style.overflow = '';
+    // reset
+    setTimeout(() => {
+      goToStep(1, true);
+      selectedPayment = null;
+      document.querySelectorAll('.payment-option').forEach(o => o.classList.remove('selected'));
+      document.querySelectorAll('.payment-details-box').forEach(b => b.classList.remove('show'));
+      document.getElementById('co-btn-confirm').disabled = true;
+    }, 400);
+  }
+
+  function goToStep(n, silent) {
+    if (!silent && n === 2 && !validateStep1()) return;
+    currentStep = n;
+
+    // Show/hide panels
+    [1,2,3,4].forEach(i => {
+      const el = document.getElementById('co-step' + i);
+      if (el) el.style.display = i === n ? 'block' : 'none';
+    });
+
+    // Update step indicators
+    [1,2,3].forEach(i => {
+      const s = document.getElementById('cstep-' + i);
+      if (!s) return;
+      s.classList.remove('active','done');
+      if (i < n) s.classList.add('done');
+      else if (i === n) s.classList.add('active');
+    });
+
+    // Re-render summaries
+    if (n === 2) renderSummary('co-summary-2');
+    if (n === 3) { renderSummary('co-summary-3'); renderAddressSummary(); }
+
+    const titles = {1:'Checkout', 2:'Payment Method', 3:'Confirm Order', 4:'Order Confirmed!'};
+    document.getElementById('checkoutTitle').textContent = titles[n] || 'Checkout';
+
+    document.getElementById('checkoutModal').scrollTop = 0;
+  }
+
+  function validateStep1() {
+    const fields = ['co-fname','co-lname','co-phone','co-address','co-city','co-province'];
+    let ok = true;
+    fields.forEach(id => {
+      const el = document.getElementById(id);
+      if (!el.value.trim()) {
+        el.style.borderColor = '#ef4444';
+        ok = false;
+        setTimeout(() => el.style.borderColor = '', 2000);
+      }
+    });
+    if (!ok) showToast('Please fill in all required fields');
+    return ok;
+  }
+
+  function selectPayment(method, el) {
+    selectedPayment = method;
+    document.querySelectorAll('.payment-option').forEach(o => o.classList.remove('selected'));
+    document.querySelectorAll('.payment-details-box').forEach(b => b.classList.remove('show'));
+    el.classList.add('selected');
+    const box = document.getElementById('pay-info-' + method);
+    if (box) box.classList.add('show');
+    document.getElementById('co-btn-confirm').disabled = false;
+  }
+
+  function renderSummary(elId) {
+    const total = cart.reduce((s,i) => s + i.price * i.qty, 0);
+    const el = document.getElementById(elId);
+    if (!el) return;
+    el.innerHTML = `
+      <h4>Order Summary</h4>
+      ${cart.map(i => `<div class="co-item"><span>${i.emoji} ${i.name} × ${i.qty}</span><span>Rs. ${(i.price * i.qty).toLocaleString()}</span></div>`).join('')}
+      <hr class="co-divider"/>
+      <div class="co-total"><span>Total</span><span>Rs. ${total.toLocaleString()}</span></div>
+    `;
+  }
+
+  function renderAddressSummary() {
+    const payLabels = {cod:'Cash on Delivery 💵', jazzcash:'JazzCash 📱', easypaisa:'Easypaisa 💚', bank:'Bank Transfer 🏦'};
+    document.getElementById('co-address-summary').innerHTML = `
+      <h4>Shipping To</h4>
+      <div class="co-item"><span>Name</span><span>${document.getElementById('co-fname').value} ${document.getElementById('co-lname').value}</span></div>
+      <div class="co-item"><span>Phone</span><span>${document.getElementById('co-phone').value}</span></div>
+      <div class="co-item"><span>Address</span><span>${document.getElementById('co-address').value}</span></div>
+      <div class="co-item"><span>City</span><span>${document.getElementById('co-city').value}, ${document.getElementById('co-province').value}</span></div>
+      <hr class="co-divider"/>
+      <div class="co-item"><span>Payment</span><span>${payLabels[selectedPayment] || selectedPayment}</span></div>
+    `;
+  }
+
+  async function placeOrder() {
+    const btn = document.getElementById('co-place-btn');
+    btn.disabled = true;
+    btn.textContent = 'Placing Order...';
+
+    const total = cart.reduce((s,i) => s + i.price * i.qty, 0);
+    const orderId = 'TF-' + Date.now().toString().slice(-6);
+    const phone = document.getElementById('co-phone').value;
+
+    const orderData = {
+      orderId,
+      customer: {
+        firstName: document.getElementById('co-fname').value,
+        lastName:  document.getElementById('co-lname').value,
+        phone,
+        address:   document.getElementById('co-address').value,
+        city:      document.getElementById('co-city').value,
+        province:  document.getElementById('co-province').value,
+        notes:     document.getElementById('co-notes').value,
+      },
+      items: cart.map(i => ({ name: i.name, qty: i.qty, price: i.price, total: i.price * i.qty })),
+      payment: selectedPayment,
+      total,
+      status: 'pending',
+      createdAt: new Date().toISOString(),
+    };
+
+    // ── Save to Firebase ──
+    try {
+      await saveOrderToFirebase(orderData);
+    } catch(e) {
+      console.error('Firebase error:', e);
+      // Still proceed — order saved locally as fallback
+    }
+
+    // Show success
+    document.getElementById('co-order-id').textContent = orderId;
+    document.getElementById('co-confirm-phone').textContent = phone;
+    goToStep(4);
+
+    // Clear cart
+    cart = [];
+    updateCartUI();
+
+    btn.disabled = false;
+    btn.textContent = '🌸 Place Order';
+  }
+
+  // ── Firebase Integration ──
+  // SETUP: Replace the config below with YOUR Firebase project config
+  // See README.md → Firebase Setup for instructions
+  async function saveOrderToFirebase(orderData) {
+    // Firebase config — replace with yours from Firebase Console
+    const FIREBASE_CONFIG = {
+      apiKey:            "AIzaSyBg-HUf_RWAABNJSS-vkb282DlcFiHBpvQ",
+      authDomain:        "theflorasan-3ca21.firebaseapp.com",
+      projectId:         "theflorasan-3ca21",
+      storageBucket:     "theflorasan-3ca21.firebasestorage.app",
+      messagingSenderId: "829876528250",
+      appId:             "1:829876528250:web:9880e527aed19cbee907c3"
+    };
+
+    // Only run if Firebase is configured
+    if (FIREBASE_CONFIG.apiKey === "YOUR_API_KEY") {
+      console.warn('Firebase not configured yet. Order not saved to database.');
+      return;
+    }
+
+    const { initializeApp } = await import('https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js');
+    const { getFirestore, collection, addDoc } = await import('https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js');
+
+    const app = initializeApp(FIREBASE_CONFIG);
+    const db  = getFirestore(app);
+    await addDoc(collection(db, 'orders'), orderData);
+    console.log('Order saved to Firebase:', orderData.orderId);
+  }
+
+  // Close checkout on overlay click
+  document.getElementById('checkoutOverlay').addEventListener('click', function(e) {
+    if (e.target === this) closeCheckout();
+  });
 
   // ══════════ TOAST ══════════
   function showToast(msg) {
